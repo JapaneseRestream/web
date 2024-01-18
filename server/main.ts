@@ -1,10 +1,30 @@
 import * as path from "node:path";
-
 import { fastify } from "fastify";
 import { fastifyStatic } from "@fastify/static";
-import { createRequestHandler } from "@mcansh/remix-fastify";
+import {
+	createRequestHandler,
+	type RequestHandler,
+} from "@mcansh/remix-fastify";
+import {
+	fastifyTRPCPlugin,
+	type FastifyTRPCPluginOptions,
+} from "@trpc/server/adapters/fastify";
 
-const server = fastify();
+import { appRouter, type AppRouter } from "./router.js";
+
+const server = fastify({ maxParamLength: 5000 });
+
+await server.register(fastifyTRPCPlugin, {
+	prefix: "/api/trpc",
+	trpcOptions: {
+		router: appRouter,
+		onError: (error) => {
+			console.error(`[trpc] Error on ${error.path}:`, error.error);
+		},
+	},
+} satisfies FastifyTRPCPluginOptions<AppRouter>);
+
+let handler: RequestHandler;
 
 if (process.env.NODE_ENV === "production") {
 	await server.register(fastifyStatic, {
@@ -33,32 +53,29 @@ if (process.env.NODE_ENV === "production") {
 		lastModified: true,
 	});
 
-	const handler = createRequestHandler({
+	handler = createRequestHandler({
 		// @ts-expect-error
 		build: await import("../build/server/index.js"),
-	});
-
-	server.all("*", (request, reply) => {
-		handler(request, reply);
 	});
 } else {
 	const vite = await import("vite");
 	const viteDevServer = await vite.createServer({
 		server: { middlewareMode: true },
 	});
+
 	const { default: middie } = await import("@fastify/middie");
 	await server.register(middie);
 	await server.use(viteDevServer.middlewares);
 
-	const handler = createRequestHandler({
+	handler = createRequestHandler({
 		build: (() =>
 			viteDevServer.ssrLoadModule("virtual:remix/server-build")) as any,
 	});
-
-	server.all("*", (request, reply) => {
-		handler(request, reply);
-	});
 }
+
+server.all("*", async (request, reply) => {
+	await handler(request, reply);
+});
 
 const address = await server.listen({ port: 3000 });
 

@@ -15,6 +15,7 @@ import { AppHeader } from "./components/header";
 import type { LinksFunction } from "@remix-run/node";
 
 import icon from "./images/icon.png";
+import { TrpcProvider } from "./trpc";
 
 export const meta: MetaFunction = () => [
 	{ charSet: "utf-8" },
@@ -33,8 +34,10 @@ const App = () => {
 			</head>
 			<body>
 				<Theme>
-					<AppHeader />
-					<Outlet />
+					<TrpcProvider>
+						<AppHeader />
+						<Outlet />
+					</TrpcProvider>
 				</Theme>
 				<ScrollRestoration />
 				<Scripts />
