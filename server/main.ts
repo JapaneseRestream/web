@@ -34,7 +34,8 @@ if (process.env.NODE_ENV === "production") {
 	});
 
 	const handler = createRequestHandler({
-		build: await import("./build/server/index.js"),
+		// @ts-expect-error
+		build: await import("../build/server/index.js"),
 	});
 
 	server.all("*", (request, reply) => {

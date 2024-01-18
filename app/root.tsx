@@ -1,3 +1,6 @@
+import "./index.css";
+import "@radix-ui/themes/styles.css";
+
 import {
 	Links,
 	LiveReload,
@@ -5,23 +8,40 @@ import {
 	Outlet,
 	Scripts,
 	ScrollRestoration,
+	type MetaFunction,
 } from "@remix-run/react";
+import { Theme } from "@radix-ui/themes";
+import { AppHeader } from "./components/header";
+import type { LinksFunction } from "@remix-run/node";
 
-export default function App() {
+import icon from "./images/icon.png";
+
+export const meta: MetaFunction = () => [
+	{ charSet: "utf-8" },
+	{ title: "Japanese Restream" },
+	{ name: "viewport", content: "width=device-width, initial-scale=1" },
+];
+
+export const links: LinksFunction = () => [{ rel: "icon", href: icon }];
+
+const App = () => {
 	return (
-		<html lang="en">
+		<html lang="ja">
 			<head>
-				<meta charSet="utf-8" />
-				<meta name="viewport" content="width=device-width, initial-scale=1" />
 				<Meta />
 				<Links />
 			</head>
 			<body>
-				<Outlet />
+				<Theme>
+					<AppHeader />
+					<Outlet />
+				</Theme>
 				<ScrollRestoration />
 				<Scripts />
 				<LiveReload />
 			</body>
 		</html>
 	);
-}
+};
+
+export default App;
