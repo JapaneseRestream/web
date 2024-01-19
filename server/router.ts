@@ -5,7 +5,6 @@ export const appRouter = router({
 	hello: procedure
 		.input(z.object({ name: z.string() }))
 		.mutation(({ input }) => {
-			console.log("request on hello:", input);
 			return { message: `Hello ${input.name}!` };
 		}),
 });
