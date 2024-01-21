@@ -3,7 +3,7 @@
     "incremental": true,
     "target": "ES2022",
     "lib": ["ES2022", "DOM"],
-    "module": "ESNext",
+    "module": "ES2022",
     "moduleResolution": "Bundler",
     "sourceMap": true,
     "isolatedModules": true,
@@ -21,6 +21,6 @@
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
-    "skipLibCheck": true
-  }
+    "skipLibCheck": true,
+  },
 }

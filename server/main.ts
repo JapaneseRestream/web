@@ -1,6 +1,7 @@
 import * as path from "node:path";
 import { fastify } from "fastify";
 import { fastifyStatic } from "@fastify/static";
+import { fastifyCookie } from "@fastify/cookie";
 import {
 	createRequestHandler,
 	type RequestHandler,
@@ -11,13 +12,20 @@ import {
 } from "@trpc/server/adapters/fastify";
 
 import { appRouter, type AppRouter } from "./router.js";
+import { env } from "../shared/env.js";
+import { createContext } from "./trpc.js";
 
 const server = fastify({ maxParamLength: 5000 });
+
+await server.register(fastifyCookie, {
+	secret: env.SESSION_COOKIE_SECRET,
+});
 
 await server.register(fastifyTRPCPlugin, {
 	prefix: "/api/trpc",
 	trpcOptions: {
 		router: appRouter,
+		createContext,
 		onError: (error) => {
 			console.error(`[trpc] Error on ${error.path}:`, error.error);
 		},

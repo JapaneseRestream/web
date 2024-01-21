@@ -5,10 +5,11 @@
     "prepare": "panda codegen",
     "build": "remix vite:build",
     "dev": "run-p dev:*",
-    "dev:remix": "onchange server -ik -- tsx server/main.ts",
+    "dev:remix": "onchange server -ik -- tsx --env-file=.env server/main.ts",
     "dev:db": "docker compose up"
   },
   "dependencies": {
+    "@fastify/cookie": "^9.3.1",
     "@fastify/static": "^6.12.0",
     "@mcansh/remix-fastify": "^3.2.1",
     "@prisma/client": "^5.8.1",
@@ -19,16 +20,20 @@
     "@trpc/client": "^10.45.0",
     "@trpc/react-query": "^10.45.0",
     "@trpc/server": "^10.45.0",
+    "cookie": "^0.6.0",
+    "cookie-signature": "^1.2.1",
     "fastify": "^4.25.2",
     "isbot": "^4.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-hook-form": "^7.49.3",
     "zod": "^3.22.4"
   },
   "devDependencies": {
     "@fastify/middie": "^8.3.0",
     "@pandacss/dev": "^0.27.2",
     "@remix-run/dev": "^2.5.0",
+    "@types/cookie-signature": "^1.1.2",
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
     "npm-run-all": "^4.1.5",

@@ -1,7 +1,59 @@
-import { initTRPC } from "@trpc/server";
+import { TRPCError, initTRPC } from "@trpc/server";
+import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify";
+import { SESSION_COOKIE_NAME } from "../shared/constants.js";
+import { validateSession } from "../shared/session.js";
+import { sessionCookieOptions } from "../shared/cookie.js";
 
-const t = initTRPC.create();
+export const createContext = async ({
+	req,
+	res,
+}: CreateFastifyContextOptions) => {
+	const setSessionToken = (token: string) => {
+		res.setCookie(SESSION_COOKIE_NAME, token, sessionCookieOptions);
+	};
+
+	const signedSessionToken = req.cookies[SESSION_COOKIE_NAME];
+	if (!signedSessionToken) {
+		return { setSessionToken };
+	}
+
+	const unsignedToken = req.unsignCookie(signedSessionToken);
+	if (!unsignedToken.valid || !unsignedToken.value) {
+		return { setSessionToken };
+	}
+
+	return {
+		setSessionToken,
+		sessionToken: unsignedToken.value,
+	};
+};
+
+const t = initTRPC.context<typeof createContext>().create();
 
 export const router = t.router;
 
-export const procedure = t.procedure;
+export const publicProcedure = t.procedure.use(async ({ ctx, next }) => {
+	const session = ctx.sessionToken
+		? await validateSession(ctx.sessionToken)
+		: undefined;
+
+	return next({
+		ctx: {
+			user: session?.user,
+		},
+	});
+});
+
+export const authenticatedProcedure = publicProcedure.use(
+	async ({ ctx, next }) => {
+		if (!ctx.sessionToken || !ctx.user) {
+			throw new TRPCError({ code: "UNAUTHORIZED" });
+		}
+		return next({
+			ctx: {
+				sessionToken: ctx.sessionToken,
+				user: ctx.user,
+			},
+		});
+	},
+);
