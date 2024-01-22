@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { trpc } from "../trpc";
 import { useNavigate } from "@remix-run/react";
 import { TRPCClientError } from "@trpc/client";

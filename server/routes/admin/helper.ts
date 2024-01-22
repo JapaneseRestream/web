@@ -29,19 +29,30 @@ export const getManyParamsSchema = z.object({
 	ids: z.array(z.string()),
 });
 
-export const getManyReferenceParamsSchema = z.object({
-	target: z.string(),
-	id: z.string(),
-	pagination: z.object({
-		page: z.number().int(),
-		perPage: z.number().int(),
-	}),
-	sort: z.object({
-		field: z.string(),
-		order: z.enum(["ASC", "DESC"]),
-	}),
-	filter: z.object({}),
-});
+export const getManyReferenceParamsSchema = z
+	.object({
+		target: z.string(),
+		id: z.string(),
+		pagination: z.object({
+			page: z.number().int(),
+			perPage: z.number().int(),
+		}),
+		sort: z.object({
+			field: z.string(),
+			order: z.enum(["ASC", "DESC"]),
+		}),
+	})
+	.transform((params) => {
+		return {
+			target: params.target,
+			id: params.id,
+			skip: (params.pagination.page - 1) * params.pagination.perPage,
+			take: params.pagination.perPage,
+			orderBy: {
+				[params.sort.field]: params.sort.order === "ASC" ? "asc" : "desc",
+			},
+		};
+	});
 
 export const createParamsSchema = <T extends z.ZodRawShape>(
 	dataSchema: z.ZodObject<T>,

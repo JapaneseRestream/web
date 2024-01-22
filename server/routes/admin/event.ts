@@ -9,17 +9,20 @@ import {
 	updateParamsSchema,
 	updateManyParamsSchema,
 	createParamsSchema,
+	getManyReferenceParamsSchema,
 } from "./helper";
 
-const eventGroupSchema = z.object({
+const eventSchema = z.object({
+	eventGroupId: z.string(),
 	slug: z.string(),
 	shortName: z.string(),
 	name: z.string(),
+	startDate: z.coerce.date(),
 });
 
-const MODEL = "eventGroup";
+const MODEL = "event";
 
-export const eventGroupRouter = router({
+export const eventRouter = router({
 	getList: adminProcedure
 		.input(getListParamsSchema)
 		.query(async ({ input }) => {
@@ -55,21 +58,42 @@ export const eventGroupRouter = router({
 			return { data: items };
 		}),
 
-	getManyReference: adminProcedure.query(() => {
-		throw new TRPCError({ code: "NOT_IMPLEMENTED" });
-	}),
+	getManyReference: adminProcedure
+		.input(getManyReferenceParamsSchema)
+		.query(async ({ input }) => {
+			if (input.target === "eventGroupId") {
+				const [items, count] = await Promise.all([
+					prisma[MODEL].findMany({
+						where: {
+							eventGroupId: input.id,
+						},
+						skip: input.skip,
+						take: input.take,
+						orderBy: input.orderBy,
+					}),
+					prisma[MODEL].count({
+						where: {
+							eventGroupId: input.id,
+						},
+					}),
+				]);
+				return { data: items, total: count };
+			}
+			throw new TRPCError({ code: "NOT_IMPLEMENTED" });
+		}),
 
 	create: adminProcedure
-		.input(createParamsSchema(eventGroupSchema))
+		.input(createParamsSchema(eventSchema))
 		.mutation(async ({ input }) => {
-			const item = await prisma[MODEL].create({
-				data: input.data,
-			});
-			return { data: item };
+			return {
+				data: await prisma[MODEL].create({
+					data: input.data,
+				}),
+			};
 		}),
 
 	update: adminProcedure
-		.input(updateParamsSchema(eventGroupSchema))
+		.input(updateParamsSchema(eventSchema))
 		.mutation(async ({ input }) => {
 			const item = await prisma[MODEL].update({
 				where: {
@@ -81,7 +105,7 @@ export const eventGroupRouter = router({
 		}),
 
 	updateMany: adminProcedure
-		.input(updateManyParamsSchema(eventGroupSchema))
+		.input(updateManyParamsSchema(eventSchema))
 		.mutation(async ({ input }) => {
 			const result = await prisma.$transaction(async (tx) => {
 				return Promise.all(
