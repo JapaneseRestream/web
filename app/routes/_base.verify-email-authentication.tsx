@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { trpc } from "../trpc";
 import { useNavigate } from "@remix-run/react";
 import { TRPCClientError } from "@trpc/client";
@@ -14,12 +14,10 @@ export default function VerifyEmailAuthentication() {
 		},
 		onError: (error) => {
 			if (error instanceof TRPCClientError) {
-				if (error.message === "invalid token") {
-					setError("無効なトークンか有効期限が切れています");
-					return;
-				}
+				setError(error.message);
+			} else {
+				setError("unknown error");
 			}
-			setError("エラーが発生しました");
 		},
 	});
 
@@ -36,6 +34,16 @@ export default function VerifyEmailAuthentication() {
 		}
 	}, []);
 
+	const errorMessage = useMemo(() => {
+		if (!error) {
+			return;
+		}
+		if (error === "invalid token") {
+			return "無効なトークンです";
+		}
+		return "不明なエラーが発生しました";
+	}, [error]);
+
 	return (
 		<div
 			className={css({
@@ -44,7 +52,7 @@ export default function VerifyEmailAuthentication() {
 				justifyItems: "center",
 			})}
 		>
-			{error && <Text color="red">{error}</Text>}
+			<Text color="red">{errorMessage}</Text>
 		</div>
 	);
 }

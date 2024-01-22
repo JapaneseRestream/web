@@ -11,18 +11,14 @@ import {
 	ScrollRestoration,
 	type MetaFunction,
 	json,
-	useLoaderData,
 } from "@remix-run/react";
 import { Theme } from "@radix-ui/themes";
-import { AppHeader } from "./components/header.js";
 import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
 import icon from "./images/icon.png";
 import { TrpcProvider } from "./trpc.js";
-import { css } from "../styled-system/css/css.js";
 import { ACTIVITY_COOKIE_NAME } from "../shared/constants.js";
 import {
 	activityCookieSetCookie,
-	getSession,
 	parseCookie,
 	parseSessionToken,
 	serializeSessionToken,
@@ -71,25 +67,10 @@ const calcHeaders = async (request: Request) => {
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const headers = await calcHeaders(request);
-	const session = await getSession(request);
-	return json(
-		{
-			user: session
-				? {
-						id: session.user.id,
-						email: session.user.email,
-					}
-				: undefined,
-		},
-		{
-			headers,
-		},
-	);
+	return json(null, { headers });
 };
 
 export default function App() {
-	const data = useLoaderData<typeof loader>();
-
 	return (
 		<html lang="ja">
 			<head>
@@ -99,28 +80,7 @@ export default function App() {
 			<body>
 				<Theme>
 					<TrpcProvider>
-						<div
-							className={css({
-								height: "100vh",
-								width: "100vw",
-								display: "grid",
-								gridTemplateRows: "auto 1fr",
-								overflow: "hidden",
-							})}
-						>
-							<AppHeader user={data.user} />
-							<div
-								className={css({
-									height: "100%",
-									width: "100%",
-									display: "grid",
-									padding: "16px",
-									overflow: "auto",
-								})}
-							>
-								<Outlet />
-							</div>
-						</div>
+						<Outlet />
 					</TrpcProvider>
 				</Theme>
 				<ScrollRestoration />
