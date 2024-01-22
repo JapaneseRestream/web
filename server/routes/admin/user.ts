@@ -9,6 +9,7 @@ import {
 	updateParamsSchema,
 	updateManyParamsSchema,
 	createParamsSchema,
+	getManyReferenceParamsSchema,
 } from "./helper";
 
 const userSchema = z.object({
@@ -53,9 +54,11 @@ export const userRouter = router({
 			return { data: items };
 		}),
 
-	getManyReference: adminProcedure.query(() => {
-		throw new TRPCError({ code: "NOT_IMPLEMENTED" });
-	}),
+	getManyReference: adminProcedure
+		.input(getManyReferenceParamsSchema)
+		.query(() => {
+			throw new TRPCError({ code: "NOT_IMPLEMENTED" });
+		}),
 
 	create: adminProcedure
 		.input(createParamsSchema(userSchema))

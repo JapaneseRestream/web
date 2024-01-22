@@ -7,6 +7,8 @@ import type {
 	DeleteResult,
 	GetListParams,
 	GetListResult,
+	GetManyReferenceParams,
+	GetManyReferenceResult,
 	GetManyResult,
 	GetOneParams,
 	GetOneResult,
@@ -53,8 +55,18 @@ export const dataProvider: DataProvider = {
 		}
 	},
 
-	getManyReference: () => {
-		throw new Error("not implemented");
+	getManyReference: (
+		resource: string,
+		params: any,
+	): Promise<GetManyReferenceResult> => {
+		switch (resource) {
+			case "eventGroup":
+			case "user":
+			case "event":
+				return trpcClient.admin[resource].getManyReference.query(params);
+			default:
+				throw new Error(`unknown resource: ${resource}`);
+		}
 	},
 
 	create: (resource: string, params: any): Promise<CreateResult> => {

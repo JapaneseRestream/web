@@ -7,6 +7,7 @@ import {
 	SimpleForm,
 	TextInput,
 	Create,
+	ReferenceManyField,
 } from "react-admin";
 
 export const EventGroupList = () => (
@@ -27,6 +28,18 @@ export const EventGroupEdit = () => (
 			<TextInput source="slug" />
 			<TextInput source="shortName" />
 			<TextInput source="name" />
+			<ReferenceManyField
+				reference="event"
+				target="eventGroupId"
+				sort={{ field: "startDate", order: "ASC" }}
+			>
+				<Datagrid>
+					<TextField source="slug" />
+					<TextField source="shortName" />
+					<TextField source="name" />
+					<TextField source="startDate" />
+				</Datagrid>
+			</ReferenceManyField>
 		</SimpleForm>
 	</Edit>
 );

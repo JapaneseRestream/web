@@ -9,6 +9,7 @@ import {
 	updateParamsSchema,
 	updateManyParamsSchema,
 	createParamsSchema,
+	getManyReferenceParamsSchema,
 } from "./helper";
 
 const eventGroupSchema = z.object({
@@ -55,9 +56,11 @@ export const eventGroupRouter = router({
 			return { data: items };
 		}),
 
-	getManyReference: adminProcedure.query(() => {
-		throw new TRPCError({ code: "NOT_IMPLEMENTED" });
-	}),
+	getManyReference: adminProcedure
+		.input(getManyReferenceParamsSchema)
+		.query(() => {
+			throw new TRPCError({ code: "NOT_IMPLEMENTED" });
+		}),
 
 	create: adminProcedure
 		.input(createParamsSchema(eventGroupSchema))
