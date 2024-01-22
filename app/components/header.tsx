@@ -32,11 +32,7 @@ export const AppHeader = ({ user }: { user?: { id: string } }) => {
 					gap: "8px",
 				})}
 			>
-				<img
-					src={icon}
-					alt="Japanese Restream"
-					className={css({ width: "40px", height: "40px" })}
-				/>
+				<img src={icon} alt="Japanese Restream" width="40" height="40" />
 				<Text size="5" weight="bold" asChild>
 					<Link to="/">Japanese Restream</Link>
 				</Text>

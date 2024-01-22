@@ -19,6 +19,10 @@ model User {
   UserDiscord         UserDiscord?
   UserSession         UserSession[]
   EmailAuthentication EmailAuthentication?
+  UserRole            UserRole[]
+  Commentator         Commentator[]
+
+  @@map("users")
 }
 
 model UserDiscord {
@@ -32,6 +36,8 @@ model UserDiscord {
   updatedAt    DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+  @@map("user_discords")
 }
 
 model UserSession {
@@ -42,6 +48,8 @@ model UserSession {
   updatedAt DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+  @@map("user_sessions")
 }
 
 model EmailAuthentication {
@@ -52,6 +60,8 @@ model EmailAuthentication {
   updatedAt DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+  @@map("email_authentications")
 }
 
 model UserRegistration {
@@ -60,4 +70,103 @@ model UserRegistration {
   token     String   @unique @db.VarChar(255)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@map("user_registrations")
+}
+
+enum Role {
+  Admin
+}
+
+model UserRole {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  role      Role
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+  @@unique([userId, role])
+  @@map("user_roles")
+}
+
+model EventGroup {
+  id        String   @id @default(uuid()) @db.Uuid
+  slug      String   @unique
+  shortName String   @unique
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Event Event[]
+
+  @@map("event_groups")
+}
+
+model Event {
+  id           String   @id @default(uuid()) @db.Uuid
+  eventGroupId String   @db.Uuid
+  slug         String   @unique
+  shortName    String   @unique
+  name         String
+  startDate    DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  eventGroup EventGroup @relation(fields: [eventGroupId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  Run        Run[]
+
+  @@map("events")
+}
+
+model Run {
+  id      String @id @default(uuid()) @db.Uuid
+  eventId String @db.Uuid
+
+  title    String
+  category String
+  duration Int
+
+  twitchVodUrl  String?
+  youtubeVodUrl String?
+
+  originalId    String
+  originalTitle String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  event       Event         @relation(fields: [eventId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  Runner      Runner[]
+  Commentator Commentator[]
+
+  @@unique([eventId, originalId])
+  @@map("runs")
+}
+
+model Runner {
+  id        String   @id @default(uuid()) @db.Uuid
+  runId     String   @db.Uuid
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  run Run @relation(fields: [runId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+  @@map("runners")
+}
+
+model Commentator {
+  id        String   @id @default(uuid()) @db.Uuid
+  runId     String   @db.Uuid
+  userId    String?  @db.Uuid
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  run  Run   @relation(fields: [runId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  user User? @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+  @@map("commentators")
 }

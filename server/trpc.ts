@@ -6,6 +6,8 @@ import {
 } from "../shared/constants.js";
 import { validateSession } from "../shared/session.js";
 import { sessionCookieOptions } from "../shared/cookie.js";
+import { prisma } from "../shared/prisma.js";
+import { Role } from "@prisma/client";
 
 export const createContext = async ({
 	req,
@@ -64,5 +66,20 @@ export const authenticatedProcedure = publicProcedure.use(
 				user: ctx.user,
 			},
 		});
+	},
+);
+
+export const adminProcedure = authenticatedProcedure.use(
+	async ({ ctx, next }) => {
+		const role = await prisma.userRole.findFirst({
+			where: {
+				userId: ctx.user.id,
+				role: Role.Admin,
+			},
+		});
+		if (!role) {
+			throw new TRPCError({ code: "UNAUTHORIZED" });
+		}
+		return next();
 	},
 );
