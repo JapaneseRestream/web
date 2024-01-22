@@ -1,7 +1,3 @@
-import "./index.css";
-import "@radix-ui/themes/styles.css";
-import "./theme-config.css";
-
 import {
 	Links,
 	LiveReload,
