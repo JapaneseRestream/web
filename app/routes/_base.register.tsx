@@ -39,7 +39,7 @@ export default function Register() {
 						gap: "4px",
 					})}
 				>
-					<label className={css({ width: "280px" })}>
+					<label className={css({ width: "250px" })}>
 						メールアドレス
 						<TextField.Input
 							inputMode="email"

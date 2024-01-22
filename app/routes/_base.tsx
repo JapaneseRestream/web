@@ -38,9 +38,13 @@ export default function BaseLayout() {
 				className={css({
 					height: "100%",
 					width: "100%",
-					padding: "16px",
 					display: "grid",
 					overflow: "auto",
+
+					padding: "8px",
+					md: {
+						padding: "16px",
+					},
 				})}
 			>
 				<Outlet />

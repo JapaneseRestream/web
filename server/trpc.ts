@@ -1,6 +1,9 @@
 import { TRPCError, initTRPC } from "@trpc/server";
 import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify";
-import { SESSION_COOKIE_NAME } from "../shared/constants.js";
+import {
+	DISCORD_OAUTH_STATE_COOKIE_NAME,
+	SESSION_COOKIE_NAME,
+} from "../shared/constants.js";
 import { validateSession } from "../shared/session.js";
 import { sessionCookieOptions } from "../shared/cookie.js";
 
@@ -12,18 +15,24 @@ export const createContext = async ({
 		res.setCookie(SESSION_COOKIE_NAME, token, sessionCookieOptions);
 	};
 
-	const signedSessionToken = req.cookies[SESSION_COOKIE_NAME];
-	if (!signedSessionToken) {
-		return { setSessionToken };
-	}
+	const discordOauthState = req.cookies[DISCORD_OAUTH_STATE_COOKIE_NAME];
 
-	const unsignedToken = req.unsignCookie(signedSessionToken);
-	if (!unsignedToken.valid || !unsignedToken.value) {
-		return { setSessionToken };
+	const signedSessionToken = req.cookies[SESSION_COOKIE_NAME];
+	const unsignedToken =
+		typeof signedSessionToken === "string"
+			? req.unsignCookie(signedSessionToken)
+			: undefined;
+
+	if (!unsignedToken?.valid || !unsignedToken.value) {
+		return {
+			setSessionToken,
+			discordOauthState,
+		};
 	}
 
 	return {
 		setSessionToken,
+		discordOauthState,
 		sessionToken: unsignedToken.value,
 	};
 };

@@ -1,13 +1,10 @@
-import { Text } from "@radix-ui/themes";
 import { useNavigate } from "@remix-run/react";
 import { trpc } from "../trpc.js";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { TRPCClientError } from "@trpc/client";
-import { css } from "../../styled-system/css/css.js";
 
 export default function VerifyRegistration() {
 	const navigate = useNavigate();
-	const [error, setError] = useState<string>();
 	const { mutate: verifyToken } = trpc.registration.verify.useMutation({
 		onSuccess: () => {
 			navigate({ pathname: "/finish-registration" });
@@ -15,11 +12,13 @@ export default function VerifyRegistration() {
 		onError: (error) => {
 			if (error instanceof TRPCClientError) {
 				if (error.message === "invalid token") {
-					setError("無効なトークンか有効期限が切れています");
+					alert("無効なトークンか有効期限が切れています");
+					navigate("/");
 					return;
 				}
 			}
-			setError("エラーが発生しました");
+			alert("エラーが発生しました");
+			navigate("/");
 		},
 	});
 
@@ -35,16 +34,4 @@ export default function VerifyRegistration() {
 			verifyToken({ token });
 		}
 	}, [verifyToken]);
-
-	return (
-		<div
-			className={css({
-				display: "grid",
-				alignContent: "start",
-				justifyItems: "center",
-			})}
-		>
-			{error && <Text color="red">{error}</Text>}
-		</div>
-	);
 }
