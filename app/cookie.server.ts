@@ -3,7 +3,7 @@ import cookieSignature from "cookie-signature";
 import {
 	ACTIVITY_COOKIE_NAME,
 	SESSION_COOKIE_NAME,
-} from "../shared/constants.js";
+} from "../shared/constants.server.js";
 import { env } from "../shared/env.js";
 import {
 	activityCookieOptions,

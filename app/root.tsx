@@ -12,7 +12,7 @@ import { Theme } from "@radix-ui/themes";
 import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
 import icon from "./images/icon.png";
 import { TrpcProvider } from "./trpc.js";
-import { ACTIVITY_COOKIE_NAME } from "../shared/constants.js";
+import { ACTIVITY_COOKIE_NAME } from "../shared/constants.server.js";
 import {
 	activityCookieSetCookie,
 	parseCookie,

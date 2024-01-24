@@ -1,7 +1,7 @@
 import "./index.css";
 
 import { redirect, type LoaderFunctionArgs } from "@remix-run/node";
-import { Admin, EditGuesser, ListGuesser, Resource } from "react-admin";
+import { Admin, Resource } from "react-admin";
 import { getSession } from "../../cookie.server";
 import { prisma } from "../../../shared/prisma";
 import { Role } from "@prisma/client";

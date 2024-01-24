@@ -89,8 +89,11 @@ CREATE TABLE "events" (
     "shortName" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "startDate" TIMESTAMP(3) NOT NULL,
+    "finished" BOOLEAN NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "dataSourceType" TEXT NOT NULL,
+    "dataSourceId" TEXT NOT NULL,
 
     CONSTRAINT "events_pkey" PRIMARY KEY ("id")
 );

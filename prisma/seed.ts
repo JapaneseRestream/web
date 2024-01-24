@@ -40,6 +40,9 @@ await prisma.event.create({
 		shortName: "AGDQ2024",
 		name: "Awesome Games Done Quick 2024",
 		startDate: new Date("2024-01-15T01:30:00+0900"),
+		finished: false,
+		dataSourceType: "GDQ",
+		dataSourceId: "46",
 	},
 });
 await prisma.event.create({
@@ -49,6 +52,9 @@ await prisma.event.create({
 		shortName: "SGDQ2024",
 		name: "Summer Games Done Quick 2024",
 		startDate: new Date("2024-07-01T02:30:00+0900"),
+		finished: false,
+		dataSourceType: "GDQ",
+		dataSourceId: "47",
 	},
 });
 await prisma.event.create({
@@ -58,5 +64,8 @@ await prisma.event.create({
 		shortName: "FrostFatales2024",
 		name: "Frost Fatales 2024",
 		startDate: new Date("2024-03-04T02:30:00+0900"),
+		finished: false,
+		dataSourceType: "GDQ",
+		dataSourceId: "48",
 	},
 });

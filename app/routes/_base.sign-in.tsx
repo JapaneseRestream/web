@@ -7,7 +7,7 @@ import { json, type LoaderFunctionArgs } from "@remix-run/node";
 import { createDiscordOauthUrl } from "../discord-oauth.server.js";
 import { useLoaderData } from "@remix-run/react";
 
-export const loader = ({ request }: LoaderFunctionArgs) => {
+export const loader = (_: LoaderFunctionArgs) => {
 	const { url, setCookie } = createDiscordOauthUrl();
 
 	return json(

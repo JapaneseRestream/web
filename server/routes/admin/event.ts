@@ -11,6 +11,7 @@ import {
 	createParamsSchema,
 	getManyReferenceParamsSchema,
 } from "./helper";
+import { dataSourceType } from "../../../shared/constants";
 
 const eventSchema = z.object({
 	eventGroupId: z.string(),
@@ -18,6 +19,9 @@ const eventSchema = z.object({
 	shortName: z.string(),
 	name: z.string(),
 	startDate: z.coerce.date(),
+	finished: z.boolean(),
+	dataSourceType: z.enum(dataSourceType),
+	dataSourceId: z.string(),
 });
 
 const MODEL = "event";

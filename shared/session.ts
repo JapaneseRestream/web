@@ -1,4 +1,4 @@
-import { SESSION_TOKEN_DURATION } from "./constants.js";
+import { SESSION_TOKEN_DURATION } from "./constants.server.js";
 import { createToken } from "./create-token.js";
 import { prisma } from "./prisma.js";
 

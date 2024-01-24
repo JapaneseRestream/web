@@ -3,7 +3,7 @@ import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify"
 import {
 	DISCORD_OAUTH_STATE_COOKIE_NAME,
 	SESSION_COOKIE_NAME,
-} from "../shared/constants.js";
+} from "../shared/constants.server.js";
 import { validateSession } from "../shared/session.js";
 import { sessionCookieOptions } from "../shared/cookie.js";
 import { prisma } from "../shared/prisma.js";

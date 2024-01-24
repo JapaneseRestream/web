@@ -2,7 +2,7 @@ import cookie from "cookie";
 import {
 	DISCORD_OAUTH_CALLBACK_URL,
 	DISCORD_OAUTH_STATE_COOKIE_NAME,
-} from "../shared/constants";
+} from "../shared/constants.server";
 import { createToken } from "../shared/create-token";
 import { env } from "../shared/env";
 

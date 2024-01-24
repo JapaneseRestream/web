@@ -1,10 +1,10 @@
 import { z } from "zod";
 import { publicProcedure, router } from "../../trpc";
 import { env } from "../../../shared/env";
-import { DISCORD_OAUTH_CALLBACK_URL } from "../../../shared/constants";
+import { DISCORD_OAUTH_CALLBACK_URL } from "../../../shared/constants.server";
 import ky from "ky";
 import { TRPCError } from "@trpc/server";
-import { Routes, parseResponse } from "discord.js";
+import { Routes } from "discord.js";
 import { apiUrl } from "../../discord-api";
 import { prisma } from "../../../shared/prisma";
 import { createSession } from "../../../shared/session";

@@ -6,7 +6,8 @@
     "build": "remix vite:build",
     "dev": "run-p dev:*",
     "dev:remix": "onchange server -ik -- tsx --env-file=.env --env-file=.env.local server/main.ts",
-    "dev:db": "docker compose up --remove-orphans"
+    "dev:db": "docker compose up --remove-orphans",
+    "dev:types": "tsc --noEmit --watch --preserveWatchOutput"
   },
   "dependencies": {
     "@fastify/cookie": "^9.3.1",

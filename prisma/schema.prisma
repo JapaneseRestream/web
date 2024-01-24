@@ -111,8 +111,12 @@ model Event {
   shortName    String   @unique
   name         String
   startDate    DateTime
+  finished     Boolean
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  dataSourceType String
+  dataSourceId   String
 
   eventGroup EventGroup @relation(fields: [eventGroupId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   Run        Run[]

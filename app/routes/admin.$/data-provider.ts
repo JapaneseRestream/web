@@ -7,7 +7,6 @@ import type {
 	DeleteResult,
 	GetListParams,
 	GetListResult,
-	GetManyReferenceParams,
 	GetManyReferenceResult,
 	GetManyResult,
 	GetOneParams,
