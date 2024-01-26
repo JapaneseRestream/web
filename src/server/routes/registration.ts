@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { publicProcedure, router } from "../trpc.js";
 import { createToken } from "../../shared/create-token.js";
-import { prisma } from "../../shared/prisma.js";
+import { prisma } from "../../../shared/prisma.server.js";
 import { env } from "../../shared/env.js";
 import { TRPCError } from "@trpc/server";
 import { createSession } from "../../shared/session.js";

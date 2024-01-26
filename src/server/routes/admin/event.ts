@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { prisma } from "../../../shared/prisma";
+import { prisma } from "../../../../shared/prisma.server";
 import { adminProcedure, router } from "../../trpc";
 import { TRPCError } from "@trpc/server";
 import {
@@ -11,14 +11,22 @@ import {
 	createParamsSchema,
 	getManyReferenceParamsSchema,
 } from "./helper";
+import { dataSourceType } from "../../../shared/constants";
 
-const userSchema = z.object({
-	email: z.string().email(),
+const eventSchema = z.object({
+	eventGroupId: z.string(),
+	slug: z.string(),
+	shortName: z.string(),
+	name: z.string(),
+	startDate: z.coerce.date(),
+	finished: z.boolean(),
+	dataSourceType: z.enum(dataSourceType),
+	dataSourceId: z.string(),
 });
 
-const MODEL = "user";
+const MODEL = "event";
 
-export const userRouter = router({
+export const eventRouter = router({
 	getList: adminProcedure
 		.input(getListParamsSchema)
 		.query(async ({ input }) => {
@@ -56,24 +64,40 @@ export const userRouter = router({
 
 	getManyReference: adminProcedure
 		.input(getManyReferenceParamsSchema)
-		.query(() => {
+		.query(async ({ input }) => {
+			if (input.target === "eventGroupId") {
+				const [items, count] = await Promise.all([
+					prisma[MODEL].findMany({
+						where: {
+							eventGroupId: input.id,
+						},
+						skip: input.skip,
+						take: input.take,
+						orderBy: input.orderBy,
+					}),
+					prisma[MODEL].count({
+						where: {
+							eventGroupId: input.id,
+						},
+					}),
+				]);
+				return { data: items, total: count };
+			}
 			throw new TRPCError({ code: "NOT_IMPLEMENTED" });
 		}),
 
 	create: adminProcedure
-		.input(createParamsSchema(userSchema))
+		.input(createParamsSchema(eventSchema))
 		.mutation(async ({ input }) => {
 			return {
 				data: await prisma[MODEL].create({
-					data: {
-						email: input.data.email,
-					},
+					data: input.data,
 				}),
 			};
 		}),
 
 	update: adminProcedure
-		.input(updateParamsSchema(userSchema))
+		.input(updateParamsSchema(eventSchema))
 		.mutation(async ({ input }) => {
 			const item = await prisma[MODEL].update({
 				where: {
@@ -85,7 +109,7 @@ export const userRouter = router({
 		}),
 
 	updateMany: adminProcedure
-		.input(updateManyParamsSchema(userSchema))
+		.input(updateManyParamsSchema(eventSchema))
 		.mutation(async ({ input }) => {
 			const result = await prisma.$transaction(async (tx) => {
 				return Promise.all(

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { publicProcedure, router } from "../../trpc";
-import { prisma } from "../../../shared/prisma";
+import { prisma } from "../../../../shared/prisma.server";
 import { createToken } from "../../../shared/create-token";
 import { env } from "../../../shared/env";
 import { TRPCError } from "@trpc/server";

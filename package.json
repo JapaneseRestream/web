@@ -5,8 +5,8 @@
     "prepare": "panda codegen",
     "build": "remix vite:build",
     "dev": "run-p dev:*",
-    "dev:remix": "onchange server -ik -- tsx --env-file=.env --env-file=.env.local server/main.ts",
-    "dev:db": "docker compose up --remove-orphans",
+    "dev:remix": "onchange server -ik -- tsx --env-file=.env --env-file=.env.local src/server/main.ts",
+    "dev:db": "docker compose up",
     "dev:types": "tsc --noEmit --watch --preserveWatchOutput"
   },
   "dependencies": {

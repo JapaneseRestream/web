@@ -6,7 +6,7 @@ import ky from "ky";
 import { TRPCError } from "@trpc/server";
 import { Routes } from "discord.js";
 import { apiUrl } from "../../discord-api";
-import { prisma } from "../../../shared/prisma";
+import { prisma } from "../../../../shared/prisma.server";
 import { createSession } from "../../../shared/session";
 
 export const discordAuthenticationRouter = router({

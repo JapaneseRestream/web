@@ -6,7 +6,7 @@ import {
 } from "../shared/constants.server.js";
 import { validateSession } from "../shared/session.js";
 import { sessionCookieOptions } from "../shared/cookie.js";
-import { prisma } from "../shared/prisma.js";
+import { prisma } from "../../shared/prisma.server.js";
 import { Role } from "@prisma/client";
 
 export const createContext = async ({

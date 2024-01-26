@@ -1,4 +1,4 @@
-import { prisma } from "../../shared/prisma";
+import { prisma } from "../../../shared/prisma.server";
 import { authenticatedProcedure, router } from "../trpc";
 import { discordAuthenticationRouter } from "./authentication/discord";
 import { emailAuthenticationRouter } from "./authentication/email";

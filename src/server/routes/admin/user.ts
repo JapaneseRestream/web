@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { prisma } from "../../../shared/prisma";
+import { prisma } from "../../../../shared/prisma.server";
 import { adminProcedure, router } from "../../trpc";
 import { TRPCError } from "@trpc/server";
 import {
@@ -12,15 +12,13 @@ import {
 	getManyReferenceParamsSchema,
 } from "./helper";
 
-const eventGroupSchema = z.object({
-	slug: z.string(),
-	shortName: z.string(),
-	name: z.string(),
+const userSchema = z.object({
+	email: z.string().email(),
 });
 
-const MODEL = "eventGroup";
+const MODEL = "user";
 
-export const eventGroupRouter = router({
+export const userRouter = router({
 	getList: adminProcedure
 		.input(getListParamsSchema)
 		.query(async ({ input }) => {
@@ -63,16 +61,19 @@ export const eventGroupRouter = router({
 		}),
 
 	create: adminProcedure
-		.input(createParamsSchema(eventGroupSchema))
+		.input(createParamsSchema(userSchema))
 		.mutation(async ({ input }) => {
-			const item = await prisma[MODEL].create({
-				data: input.data,
-			});
-			return { data: item };
+			return {
+				data: await prisma[MODEL].create({
+					data: {
+						email: input.data.email,
+					},
+				}),
+			};
 		}),
 
 	update: adminProcedure
-		.input(updateParamsSchema(eventGroupSchema))
+		.input(updateParamsSchema(userSchema))
 		.mutation(async ({ input }) => {
 			const item = await prisma[MODEL].update({
 				where: {
@@ -84,7 +85,7 @@ export const eventGroupRouter = router({
 		}),
 
 	updateMany: adminProcedure
-		.input(updateManyParamsSchema(eventGroupSchema))
+		.input(updateManyParamsSchema(userSchema))
 		.mutation(async ({ input }) => {
 			const result = await prisma.$transaction(async (tx) => {
 				return Promise.all(

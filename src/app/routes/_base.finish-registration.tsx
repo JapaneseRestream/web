@@ -1,5 +1,5 @@
 import { Button } from "@radix-ui/themes";
-import { css } from "../../styled-system/css";
+import { css } from "../../../styled-system/css";
 import { json, useLoaderData } from "@remix-run/react";
 import { createDiscordOauthUrl } from "../discord-oauth.server";
 

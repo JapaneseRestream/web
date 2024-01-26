@@ -3,7 +3,7 @@ import "./index.css";
 import { redirect, type LoaderFunctionArgs } from "@remix-run/node";
 import { Admin, Resource } from "react-admin";
 import { getSession } from "../../cookie.server";
-import { prisma } from "../../../shared/prisma";
+import { prisma } from "../../../../shared/prisma.server";
 import { Role } from "@prisma/client";
 import { dataProvider } from "./data-provider";
 import {

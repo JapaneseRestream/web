@@ -1,6 +1,6 @@
 import { SESSION_TOKEN_DURATION } from "./constants.server.js";
 import { createToken } from "./create-token.js";
-import { prisma } from "./prisma.js";
+import { prisma } from "../../shared/prisma.server.js";
 
 export const createSession = async (
 	opts: { newUser: true; email: string } | { newUser: false; userId: string },

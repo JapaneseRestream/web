@@ -1,4 +1,4 @@
-import { env } from "../shared/env";
+import { env } from "./env";
 
 export const SESSION_COOKIE_NAME = "app_sesssion_token";
 

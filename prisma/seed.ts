@@ -1,5 +1,5 @@
 import { Role } from "@prisma/client";
-import { prisma } from "../shared/prisma";
+import { prisma } from "../shared/prisma.server";
 
 await prisma.user.create({
 	data: {
