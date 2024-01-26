@@ -14,6 +14,7 @@ import {
 import { appRouter, type AppRouter } from "./router.js";
 import { env } from "../shared/env.js";
 import { createContext } from "./trpc.js";
+import { syncDataSource } from "./jobs/sync-data-source.js";
 
 const server = fastify({ maxParamLength: 5000 });
 
@@ -88,3 +89,16 @@ server.all("*", async (request, reply) => {
 const address = await server.listen({ port: 3000 });
 
 console.log(`server listening on ${address}`);
+
+const sync = () => {
+	syncDataSource()
+		.then(() => {
+			console.log("event data synced");
+		})
+		.catch((error) => {
+			console.error(error);
+		});
+};
+
+sync();
+setInterval(sync, 60 * 1000);
