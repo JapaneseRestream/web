@@ -15,123 +15,65 @@ import type {
 	UpdateParams,
 	UpdateResult,
 } from "react-admin";
-import { trpc, trpcClient } from "../../trpc";
+import { trpcClient } from "../../trpc";
+
+const filterResource = (resource: string) => {
+	switch (resource) {
+		case "eventGroup":
+		case "user":
+		case "event":
+		case "run":
+			return resource;
+		default:
+			throw new Error(`unknown resource: ${resource}`);
+	}
+};
 
 export const dataProvider: DataProvider = {
 	getList: (
 		resource: string,
 		params: GetListParams,
 	): Promise<GetListResult> => {
-		switch (resource) {
-			case "eventGroup":
-			case "user":
-			case "event":
-			case "run":
-				return trpcClient.admin[resource].getList.query(params);
-			default:
-				throw new Error(`unknown resource: ${resource}`);
-		}
+		return trpcClient.admin[filterResource(resource)].getList.query(params);
 	},
 
 	getOne: (resource: string, params: GetOneParams): Promise<GetOneResult> => {
-		switch (resource) {
-			case "eventGroup":
-			case "user":
-			case "event":
-			case "run":
-				return trpcClient.admin[resource].getOne.query(params);
-			default:
-				throw new Error(`unknown resource: ${resource}`);
-		}
+		return trpcClient.admin[filterResource(resource)].getOne.query(params);
 	},
 
 	getMany: (resource: string, params: any): Promise<GetManyResult> => {
-		switch (resource) {
-			case "eventGroup":
-			case "user":
-			case "event":
-			case "run":
-				return trpcClient.admin[resource].getMany.query(params);
-			default:
-				throw new Error(`unknown resource: ${resource}`);
-		}
+		return trpcClient.admin[filterResource(resource)].getMany.query(params);
 	},
 
 	getManyReference: (
 		resource: string,
 		params: any,
 	): Promise<GetManyReferenceResult> => {
-		switch (resource) {
-			case "eventGroup":
-			case "user":
-			case "event":
-			case "run":
-				return trpcClient.admin[resource].getManyReference.query(params);
-			default:
-				throw new Error(`unknown resource: ${resource}`);
-		}
+		return trpcClient.admin[filterResource(resource)].getManyReference.query(
+			params,
+		);
 	},
 
 	create: (resource: string, params: any): Promise<CreateResult> => {
-		switch (resource) {
-			case "eventGroup":
-			case "user":
-			case "event":
-			case "run":
-				return trpcClient.admin[resource].create.mutate(params);
-			default:
-				throw new Error(`unknown resource: ${resource}`);
-		}
+		return trpcClient.admin[filterResource(resource)].create.mutate(params);
 	},
 
 	update: (resource: string, params: UpdateParams): Promise<UpdateResult> => {
-		switch (resource) {
-			case "eventGroup":
-			case "user":
-			case "event":
-			case "run":
-				return trpcClient.admin[resource].update.mutate(params);
-			default:
-				throw new Error(`unknown resource: ${resource}`);
-		}
+		return trpcClient.admin[filterResource(resource)].update.mutate(params);
 	},
 
 	updateMany: (resource: string, params: any): Promise<UpdateManyResult> => {
-		switch (resource) {
-			case "eventGroup":
-			case "user":
-			case "event":
-			case "run":
-				return trpcClient.admin[resource].updateMany.mutate(params);
-			default:
-				throw new Error(`unknown resource: ${resource}`);
-		}
+		return trpcClient.admin[filterResource(resource)].updateMany.mutate(params);
 	},
 
 	delete: (resource: string, params: DeleteParams): Promise<DeleteResult> => {
-		switch (resource) {
-			case "eventGroup":
-			case "user":
-			case "event":
-			case "run":
-				return trpcClient.admin[resource].delete.mutate(params);
-			default:
-				throw new Error(`unknown resource: ${resource}`);
-		}
+		return trpcClient.admin[filterResource(resource)].delete.mutate(params);
 	},
 
 	deleteMany: (
 		resource: string,
 		params: DeleteManyParams,
 	): Promise<DeleteManyResult> => {
-		switch (resource) {
-			case "eventGroup":
-			case "user":
-			case "event":
-			case "run":
-				return trpcClient.admin[resource].deleteMany.mutate(params);
-			default:
-				throw new Error(`unknown resource: ${resource}`);
-		}
+		return trpcClient.admin[filterResource(resource)].deleteMany.mutate(params);
 	},
 };
