@@ -128,11 +128,12 @@ model Run {
   id      String @id @default(uuid()) @db.Uuid
   eventId String @db.Uuid
 
-  title    String
-  category String
-  duration Int
-  order    Int
-  runners  String[]
+  title         String
+  category      String
+  duration      Int
+  setupDuration Int
+  order         Int
+  runners       String[]
 
   twitchVodUrl  String?
   youtubeVodUrl String?

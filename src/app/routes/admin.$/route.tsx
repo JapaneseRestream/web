@@ -13,6 +13,7 @@ import {
 } from "./event-group";
 import { UserList } from "./user";
 import { EventCreate, EventEdit, EventList } from "./event";
+import { RunEdit, RunList } from "./run";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const session = await getSession(request);
@@ -55,6 +56,7 @@ export default function AdminPage() {
 				create={EventCreate}
 				recordRepresentation={(record) => record.shortName}
 			/>
+			<Resource name="run" list={RunList} edit={RunEdit} />
 		</Admin>
 	);
 }

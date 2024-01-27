@@ -105,6 +105,9 @@ CREATE TABLE "runs" (
     "title" TEXT NOT NULL,
     "category" TEXT NOT NULL,
     "duration" INTEGER NOT NULL,
+    "setupDuration" INTEGER NOT NULL,
+    "order" INTEGER NOT NULL,
+    "runners" TEXT[],
     "twitchVodUrl" TEXT,
     "youtubeVodUrl" TEXT,
     "originalId" TEXT NOT NULL,
@@ -113,17 +116,6 @@ CREATE TABLE "runs" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "runs_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "runners" (
-    "id" UUID NOT NULL,
-    "runId" UUID NOT NULL,
-    "name" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "runners_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -180,9 +172,6 @@ CREATE UNIQUE INDEX "events_shortName_key" ON "events"("shortName");
 -- CreateIndex
 CREATE UNIQUE INDEX "runs_eventId_originalId_key" ON "runs"("eventId", "originalId");
 
--- CreateIndex
-CREATE UNIQUE INDEX "runners_name_key" ON "runners"("name");
-
 -- AddForeignKey
 ALTER TABLE "user_discords" ADD CONSTRAINT "user_discords_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -200,9 +189,6 @@ ALTER TABLE "events" ADD CONSTRAINT "events_eventGroupId_fkey" FOREIGN KEY ("eve
 
 -- AddForeignKey
 ALTER TABLE "runs" ADD CONSTRAINT "runs_eventId_fkey" FOREIGN KEY ("eventId") REFERENCES "events"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "runners" ADD CONSTRAINT "runners_runId_fkey" FOREIGN KEY ("runId") REFERENCES "runs"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "commentators" ADD CONSTRAINT "commentators_runId_fkey" FOREIGN KEY ("runId") REFERENCES "runs"("id") ON DELETE CASCADE ON UPDATE CASCADE;

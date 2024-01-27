@@ -7,24 +7,29 @@ import {
 	getManyParamsSchema,
 	updateParamsSchema,
 	updateManyParamsSchema,
-	createParamsSchema,
 	getManyReferenceParamsSchema,
-	getListParamsSchema,
+	getListParamsSchemaWithFilter,
 } from "./helper";
 
-const userSchema = z.object({
-	email: z.string().email(),
+const runSchema = z.object({
+	title: z.string(),
+	twitchVodUrl: z.string().url().nullable(),
+	youtubeVodUrl: z.string().url().nullable(),
 });
 
-const MODEL = "user";
+const runFilterSchema = z.object({
+	eventId: z.string().optional(),
+});
 
-export const userRouter = router({
+const MODEL = "run";
+
+export const runRouter = router({
 	getList: adminProcedure
-		.input(getListParamsSchema)
+		.input(getListParamsSchemaWithFilter(runFilterSchema))
 		.query(async ({ input }) => {
 			const [item, count] = await Promise.all([
 				prisma[MODEL].findMany(input),
-				prisma[MODEL].count(),
+				prisma[MODEL].count({ where: input.where }),
 			]);
 			return { data: item, total: count };
 		}),
@@ -60,18 +65,12 @@ export const userRouter = router({
 			throw new TRPCError({ code: "NOT_IMPLEMENTED" });
 		}),
 
-	create: adminProcedure
-		.input(createParamsSchema(userSchema))
-		.mutation(async ({ input }) => {
-			return {
-				data: await prisma[MODEL].create({
-					data: input.data,
-				}),
-			};
-		}),
+	create: adminProcedure.mutation(async () => {
+		throw new TRPCError({ code: "NOT_IMPLEMENTED" });
+	}),
 
 	update: adminProcedure
-		.input(updateParamsSchema(userSchema))
+		.input(updateParamsSchema(runSchema))
 		.mutation(async ({ input }) => {
 			const item = await prisma[MODEL].update({
 				where: {
@@ -83,7 +82,7 @@ export const userRouter = router({
 		}),
 
 	updateMany: adminProcedure
-		.input(updateManyParamsSchema(userSchema))
+		.input(updateManyParamsSchema(runSchema))
 		.mutation(async ({ input }) => {
 			const result = await prisma.$transaction(async (tx) => {
 				return Promise.all(

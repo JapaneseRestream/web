@@ -15,7 +15,7 @@ import type {
 	UpdateParams,
 	UpdateResult,
 } from "react-admin";
-import { trpcClient } from "../../trpc";
+import { trpc, trpcClient } from "../../trpc";
 
 export const dataProvider: DataProvider = {
 	getList: (
@@ -26,6 +26,7 @@ export const dataProvider: DataProvider = {
 			case "eventGroup":
 			case "user":
 			case "event":
+			case "run":
 				return trpcClient.admin[resource].getList.query(params);
 			default:
 				throw new Error(`unknown resource: ${resource}`);
@@ -37,6 +38,7 @@ export const dataProvider: DataProvider = {
 			case "eventGroup":
 			case "user":
 			case "event":
+			case "run":
 				return trpcClient.admin[resource].getOne.query(params);
 			default:
 				throw new Error(`unknown resource: ${resource}`);
@@ -48,6 +50,7 @@ export const dataProvider: DataProvider = {
 			case "eventGroup":
 			case "user":
 			case "event":
+			case "run":
 				return trpcClient.admin[resource].getMany.query(params);
 			default:
 				throw new Error(`unknown resource: ${resource}`);
@@ -62,6 +65,7 @@ export const dataProvider: DataProvider = {
 			case "eventGroup":
 			case "user":
 			case "event":
+			case "run":
 				return trpcClient.admin[resource].getManyReference.query(params);
 			default:
 				throw new Error(`unknown resource: ${resource}`);
@@ -73,6 +77,7 @@ export const dataProvider: DataProvider = {
 			case "eventGroup":
 			case "user":
 			case "event":
+			case "run":
 				return trpcClient.admin[resource].create.mutate(params);
 			default:
 				throw new Error(`unknown resource: ${resource}`);
@@ -84,6 +89,7 @@ export const dataProvider: DataProvider = {
 			case "eventGroup":
 			case "user":
 			case "event":
+			case "run":
 				return trpcClient.admin[resource].update.mutate(params);
 			default:
 				throw new Error(`unknown resource: ${resource}`);
@@ -95,6 +101,7 @@ export const dataProvider: DataProvider = {
 			case "eventGroup":
 			case "user":
 			case "event":
+			case "run":
 				return trpcClient.admin[resource].updateMany.mutate(params);
 			default:
 				throw new Error(`unknown resource: ${resource}`);
@@ -106,6 +113,7 @@ export const dataProvider: DataProvider = {
 			case "eventGroup":
 			case "user":
 			case "event":
+			case "run":
 				return trpcClient.admin[resource].delete.mutate(params);
 			default:
 				throw new Error(`unknown resource: ${resource}`);
@@ -120,6 +128,7 @@ export const dataProvider: DataProvider = {
 			case "eventGroup":
 			case "user":
 			case "event":
+			case "run":
 				return trpcClient.admin[resource].deleteMany.mutate(params);
 			default:
 				throw new Error(`unknown resource: ${resource}`);

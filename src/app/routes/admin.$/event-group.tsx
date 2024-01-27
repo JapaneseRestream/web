@@ -23,7 +23,7 @@ export const EventGroupList = () => (
 );
 
 export const EventGroupEdit = () => (
-	<Edit>
+	<Edit mutationMode="pessimistic">
 		<SimpleForm>
 			<TextInput source="slug" />
 			<TextInput source="shortName" />

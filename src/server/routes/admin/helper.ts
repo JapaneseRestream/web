@@ -1,25 +1,40 @@
 import { z } from "zod";
 
-export const getListParamsSchema = z
-	.object({
-		pagination: z.object({
-			page: z.number().int(),
-			perPage: z.number().int(),
-		}),
-		sort: z.object({
-			field: z.string(),
-			order: z.enum(["ASC", "DESC"]),
-		}),
-	})
-	.transform((params) => {
-		return {
+const baseGetListParamsSchema = z.object({
+	pagination: z.object({
+		page: z.number().int(),
+		perPage: z.number().int(),
+	}),
+	sort: z.object({
+		field: z.string(),
+		order: z.enum(["ASC", "DESC"]),
+	}),
+});
+
+export const getListParamsSchema = baseGetListParamsSchema.transform(
+	(params) => ({
+		skip: (params.pagination.page - 1) * params.pagination.perPage,
+		take: params.pagination.perPage,
+		orderBy: {
+			[params.sort.field]: params.sort.order === "ASC" ? "asc" : "desc",
+		},
+	}),
+);
+
+export const getListParamsSchemaWithFilter = <T extends z.ZodRawShape>(
+	filterSchema: z.ZodObject<T>,
+) => {
+	return baseGetListParamsSchema
+		.extend({ filter: filterSchema })
+		.transform((params) => ({
 			skip: (params.pagination.page - 1) * params.pagination.perPage,
 			take: params.pagination.perPage,
 			orderBy: {
 				[params.sort.field]: params.sort.order === "ASC" ? "asc" : "desc",
 			},
-		};
-	});
+			where: params.filter,
+		}));
+};
 
 export const getOneParamsSchema = z.object({
 	id: z.string(),

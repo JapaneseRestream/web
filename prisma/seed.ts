@@ -54,7 +54,7 @@ await prisma.event.create({
 		startDate: new Date("2024-07-01T02:30:00+0900"),
 		finished: false,
 		dataSourceType: "GDQ",
-		dataSourceId: "47",
+		dataSourceId: "48",
 	},
 });
 await prisma.event.create({
@@ -66,6 +66,6 @@ await prisma.event.create({
 		startDate: new Date("2024-03-04T02:30:00+0900"),
 		finished: false,
 		dataSourceType: "GDQ",
-		dataSourceId: "48",
+		dataSourceId: "47",
 	},
 });

@@ -34,7 +34,7 @@ export const EventList = () => (
 );
 
 export const EventEdit = () => (
-	<Edit>
+	<Edit mutationMode="pessimistic">
 		<SimpleForm>
 			<ReferenceInput source="eventGroupId" reference="eventGroup" />
 			<TextInput source="slug" />

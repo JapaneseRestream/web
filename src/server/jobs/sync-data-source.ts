@@ -21,10 +21,8 @@ export const syncDataSource = async () => {
 			runnersUrl.searchParams.append("event", event.dataSourceId);
 
 			const [runsResponse, runnersResponse, existingRuns] = await Promise.all([
-				ky.get(runsUrl.href).json<typeof import("./samples/gdq-runs.json")>(),
-				ky
-					.get(runnersUrl.href)
-					.json<typeof import("./samples/gdq-runners.json")>(),
+				ky(runsUrl.href).json<typeof import("./samples/gdq-runs.json")>(),
+				ky(runnersUrl.href).json<typeof import("./samples/gdq-runners.json")>(),
 				prisma.run.findMany({
 					where: { eventId: event.id },
 				}),
@@ -34,6 +32,7 @@ export const syncDataSource = async () => {
 				title: run.fields.name,
 				category: run.fields.category,
 				duration: durationStrToSeconds(run.fields.run_time),
+				setupDuration: durationStrToSeconds(run.fields.setup_time),
 				order: run.fields.order,
 				runners: run.fields.runners
 					.map((runnerId) =>
@@ -52,7 +51,15 @@ export const syncDataSource = async () => {
 			);
 			const runsToUpdate = runs.filter((run) =>
 				existingRuns.some(
-					(existingRun) => existingRun.originalId === run.originalId,
+					(existingRun) =>
+						existingRun.originalId === run.originalId &&
+						(existingRun.category !== run.category ||
+							existingRun.duration !== run.duration ||
+							existingRun.setupDuration !== run.setupDuration ||
+							existingRun.order !== run.order ||
+							JSON.stringify(existingRun.runners) !==
+								JSON.stringify(run.runners) ||
+							existingRun.originalTitle !== run.originalTitle),
 				),
 			);
 			const runsToDelete = existingRuns.filter(
@@ -68,7 +75,7 @@ export const syncDataSource = async () => {
 							...run,
 						})),
 					}),
-					runsToUpdate.map((run) =>
+					...runsToUpdate.map((run) =>
 						tx.run.update({
 							where: {
 								eventId_originalId: {
@@ -79,6 +86,7 @@ export const syncDataSource = async () => {
 							data: {
 								category: run.category,
 								duration: run.duration,
+								setupDuration: run.setupDuration,
 								order: run.order,
 								runners: run.runners,
 								originalTitle: run.originalTitle,

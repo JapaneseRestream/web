@@ -91,13 +91,9 @@ const address = await server.listen({ port: 3000 });
 console.log(`server listening on ${address}`);
 
 const sync = () => {
-	syncDataSource()
-		.then(() => {
-			console.log("event data synced");
-		})
-		.catch((error) => {
-			console.error(error);
-		});
+	syncDataSource().catch((error) => {
+		console.error(error);
+	});
 };
 
 sync();
