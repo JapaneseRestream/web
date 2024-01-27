@@ -13,7 +13,6 @@ import {
 export const EventGroupList = () => (
 	<List>
 		<Datagrid rowClick="edit">
-			<TextField source="slug" />
 			<TextField source="shortName" />
 			<TextField source="name" />
 			<DateField source="createdAt" />
@@ -25,7 +24,6 @@ export const EventGroupList = () => (
 export const EventGroupEdit = () => (
 	<Edit mutationMode="pessimistic">
 		<SimpleForm>
-			<TextInput source="slug" />
 			<TextInput source="shortName" />
 			<TextInput source="name" />
 			<ReferenceManyField
@@ -34,7 +32,6 @@ export const EventGroupEdit = () => (
 				sort={{ field: "startDate", order: "ASC" }}
 			>
 				<Datagrid>
-					<TextField source="slug" />
 					<TextField source="shortName" />
 					<TextField source="name" />
 					<TextField source="startDate" />
@@ -47,7 +44,6 @@ export const EventGroupEdit = () => (
 export const EventGroupCreate = () => (
 	<Create>
 		<SimpleForm>
-			<TextInput source="slug" />
 			<TextInput source="shortName" />
 			<TextInput source="name" />
 		</SimpleForm>

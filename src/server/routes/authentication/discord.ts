@@ -1,13 +1,13 @@
 import { z } from "zod";
 import { publicProcedure, router } from "../../trpc";
-import { env } from "../../../shared/env";
+import { env } from "../../../shared/env.server";
 import { DISCORD_OAUTH_CALLBACK_URL } from "../../../shared/constants.server";
 import ky from "ky";
 import { TRPCError } from "@trpc/server";
 import { Routes } from "discord.js";
 import { apiUrl } from "../../discord-api";
-import { prisma } from "../../../../shared/prisma.server";
-import { createSession } from "../../../shared/session";
+import { prisma } from "../../../shared/prisma.server";
+import { createSession } from "../../../shared/session.server";
 
 export const discordAuthenticationRouter = router({
 	verify: publicProcedure

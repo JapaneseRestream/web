@@ -1,10 +1,11 @@
 import { z } from "zod";
 import { publicProcedure, router } from "../trpc.js";
 import { createToken } from "../../shared/create-token.js";
-import { prisma } from "../../../shared/prisma.server.js";
-import { env } from "../../shared/env.js";
+import { prisma } from "../../shared/prisma.server.js";
+import { env } from "../../shared/env.server.js";
 import { TRPCError } from "@trpc/server";
-import { createSession } from "../../shared/session.js";
+import { createSession } from "../../shared/session.server.js";
+import { VERIFY_TOKEN_DURATION } from "../../shared/constants.server.js";
 
 export const registrationRouter = router({
 	initialize: publicProcedure
@@ -59,7 +60,7 @@ export const registrationRouter = router({
 				where: {
 					token: input.token,
 					updatedAt: {
-						gt: new Date(Date.now() - 10 * 60 * 1000),
+						gt: new Date(Date.now() - VERIFY_TOKEN_DURATION),
 					},
 				},
 				select: {

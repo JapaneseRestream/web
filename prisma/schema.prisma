@@ -93,7 +93,6 @@ model UserRole {
 
 model EventGroup {
   id        String   @id @default(uuid()) @db.Uuid
-  slug      String   @unique
   shortName String   @unique
   name      String
   createdAt DateTime @default(now())
@@ -107,7 +106,6 @@ model EventGroup {
 model Event {
   id           String   @id @default(uuid()) @db.Uuid
   eventGroupId String   @db.Uuid
-  slug         String   @unique
   shortName    String   @unique
   name         String
   startDate    DateTime

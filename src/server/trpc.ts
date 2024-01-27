@@ -4,9 +4,9 @@ import {
 	DISCORD_OAUTH_STATE_COOKIE_NAME,
 	SESSION_COOKIE_NAME,
 } from "../shared/constants.server.js";
-import { validateSession } from "../shared/session.js";
+import { validateSession } from "../shared/session.server.js";
 import { sessionCookieOptions } from "../shared/cookie.js";
-import { prisma } from "../../shared/prisma.server.js";
+import { prisma } from "../shared/prisma.server.js";
 import { Role } from "@prisma/client";
 
 export const createContext = async ({

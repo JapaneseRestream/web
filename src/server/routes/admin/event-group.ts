@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { prisma } from "../../../../shared/prisma.server";
+import { prisma } from "../../../shared/prisma.server";
 import { adminProcedure, router } from "../../trpc";
 import { TRPCError } from "@trpc/server";
 import {
@@ -13,7 +13,6 @@ import {
 } from "./helper";
 
 const eventGroupSchema = z.object({
-	slug: z.string(),
 	shortName: z.string(),
 	name: z.string(),
 });

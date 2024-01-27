@@ -1,6 +1,4 @@
 import "../index.css";
-import "@radix-ui/themes/styles.css";
-import "../theme-config.css";
 
 import { Outlet, json, useLoaderData } from "@remix-run/react";
 import { css } from "../../../styled-system/css";

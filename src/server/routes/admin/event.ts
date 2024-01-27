@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { prisma } from "../../../../shared/prisma.server";
+import { prisma } from "../../../shared/prisma.server";
 import { adminProcedure, router } from "../../trpc";
 import { TRPCError } from "@trpc/server";
 import {
@@ -15,7 +15,6 @@ import { dataSourceType } from "../../../shared/constants";
 
 const eventSchema = z.object({
 	eventGroupId: z.string(),
-	slug: z.string(),
 	shortName: z.string(),
 	name: z.string(),
 	startDate: z.coerce.date(),

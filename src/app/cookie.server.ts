@@ -4,12 +4,12 @@ import {
 	ACTIVITY_COOKIE_NAME,
 	SESSION_COOKIE_NAME,
 } from "../shared/constants.server.js";
-import { env } from "../shared/env.js";
+import { env } from "../shared/env.server.js";
 import {
 	activityCookieOptions,
 	sessionCookieOptions,
 } from "../shared/cookie.js";
-import { validateSession } from "../shared/session.js";
+import { validateSession } from "../shared/session.server.js";
 
 export const parseCookie = (request: Request) => {
 	const cookieHeader = request.headers.get("cookie");

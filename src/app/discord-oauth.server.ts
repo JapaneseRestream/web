@@ -4,7 +4,7 @@ import {
 	DISCORD_OAUTH_STATE_COOKIE_NAME,
 } from "../shared/constants.server";
 import { createToken } from "../shared/create-token";
-import { env } from "../shared/env";
+import { env } from "../shared/env.server";
 
 const discordOauthUrl = "https://discord.com/oauth2/authorize";
 

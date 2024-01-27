@@ -1,4 +1,4 @@
-import { env } from "./env";
+import { env } from "./env.server";
 
 export const SESSION_COOKIE_NAME = "app_sesssion_token";
 
@@ -14,3 +14,5 @@ export const DISCORD_OAUTH_CALLBACK_URL = new URL(
 ).href;
 
 export const DISCORD_API = "https://discord.com/api/v10";
+
+export const VERIFY_TOKEN_DURATION = 3 * 60 * 1000;

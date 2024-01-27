@@ -1,5 +1,5 @@
 import { SESSION_TOKEN_DURATION } from "./constants.server.js";
-import { env } from "./env.js";
+import { env } from "./env.server.js";
 
 export const sessionCookieOptions = {
 	httpOnly: true,

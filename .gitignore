@@ -1,5 +1,6 @@
 /build
 /out
+/*.pem
 
 ## Panda
 /styled-system

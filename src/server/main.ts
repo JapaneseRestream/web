@@ -1,3 +1,4 @@
+import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { fastify } from "fastify";
 import { fastifyStatic } from "@fastify/static";
@@ -12,11 +13,23 @@ import {
 } from "@trpc/server/adapters/fastify";
 
 import { appRouter, type AppRouter } from "./router.js";
-import { env } from "../shared/env.js";
+import { env } from "../shared/env.server.js";
 import { createContext } from "./trpc.js";
 import { syncDataSource } from "./jobs/sync-data-source.js";
 
-const server = fastify({ maxParamLength: 5000 });
+const [sslKey, sslCert] = await Promise.all([
+	fs.readFile(env.SSL_KEY),
+	fs.readFile(env.SSL_CERT),
+]);
+
+const server = fastify({
+	maxParamLength: 5000,
+	http2: true,
+	https: {
+		key: sslKey,
+		cert: sslCert,
+	},
+});
 
 await server.register(fastifyCookie, {
 	secret: env.SESSION_COOKIE_SECRET,
@@ -37,7 +50,7 @@ let handler: RequestHandler;
 
 if (process.env.NODE_ENV === "production") {
 	await server.register(fastifyStatic, {
-		root: path.join(import.meta.dirname, "build/client/assets"),
+		root: path.join(import.meta.dirname, "../build/client/assets"),
 		prefix: "/assets",
 		wildcard: true,
 		decorateReply: false,
@@ -51,7 +64,7 @@ if (process.env.NODE_ENV === "production") {
 	});
 
 	await server.register(fastifyStatic, {
-		root: path.join(import.meta.dirname, "build/client"),
+		root: path.join(import.meta.dirname, "../build/client"),
 		prefix: "/",
 		wildcard: false,
 		cacheControl: true,
@@ -83,10 +96,10 @@ if (process.env.NODE_ENV === "production") {
 }
 
 server.all("*", async (request, reply) => {
-	await handler(request, reply);
+	await handler(request as any, reply as any);
 });
 
-const address = await server.listen({ port: 3000 });
+const address = await server.listen({ port: env.LISTEN_PORT });
 
 console.log(`server listening on ${address}`);
 

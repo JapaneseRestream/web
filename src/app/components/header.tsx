@@ -19,30 +19,38 @@ export const AppHeader = ({ user }: { user?: { id: string } }) => {
 				padding: "8px",
 				backgroundColor: "cyan.500",
 				display: "grid",
-				gridTemplateColumns: "1fr auto",
+				gridTemplateColumns: "auto 1fr auto",
+				gap: "8px",
 			})}
 		>
-			<div
+			<Link
+				to="/"
 				className={css({
 					display: "grid",
 					gridAutoFlow: "column",
-					justifyContent: "start",
-					alignContent: "center",
 					alignItems: "center",
 					gap: "8px",
 				})}
 			>
 				<img src={icon} alt="Japanese Restream" width="40" height="40" />
-				<Text size="5" weight="bold" asChild>
-					<Link to="/">Japanese Restream</Link>
+			</Link>
+			<div
+				className={css({
+					display: "grid",
+					justifyContent: "center",
+					alignItems: "center",
+				})}
+			>
+				<Text size="3" weight="bold" asChild>
+					<Link to="/archives">アーカイブ</Link>
 				</Text>
 			</div>
 			<div
 				className={css({
 					display: "grid",
 					gridAutoFlow: "column",
-					gap: "4px",
 					alignItems: "center",
+					gap: "4px",
 				})}
 			>
 				{revalidator.state === "loading" ? null : user ? (
@@ -52,6 +60,7 @@ export const AppHeader = ({ user }: { user?: { id: string } }) => {
 							onClick={() => {
 								signOut();
 							}}
+							className={css({ paddingLeft: "16px" })}
 						>
 							ログアウト
 						</Button>

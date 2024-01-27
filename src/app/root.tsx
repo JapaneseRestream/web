@@ -19,7 +19,7 @@ import {
 	parseSessionToken,
 	serializeSessionToken,
 } from "./cookie.server.js";
-import { renewSession } from "../shared/session.js";
+import { renewSession } from "../shared/session.server.js";
 
 export const meta: MetaFunction = () => [
 	{ charSet: "utf-8" },
