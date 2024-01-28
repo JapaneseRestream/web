@@ -99,7 +99,10 @@ server.all("*", async (request, reply) => {
 	await handler(request as any, reply as any);
 });
 
-const address = await server.listen({ port: env.LISTEN_PORT });
+const address = await server.listen({
+	port: env.LISTEN_PORT,
+	host: env.LISTEN_HOST,
+});
 
 console.log(`server listening on ${address}`);
 
