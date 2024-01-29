@@ -7,7 +7,7 @@ export default function VerifyRegistration() {
 	const navigate = useNavigate();
 	const { mutate: verifyToken } = trpc.registration.verify.useMutation({
 		onSuccess: () => {
-			navigate({ pathname: "/finish-registration" });
+			navigate({ pathname: "/sign-in-options" });
 		},
 		onError: (error) => {
 			if (error instanceof TRPCClientError) {

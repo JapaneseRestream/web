@@ -37,12 +37,17 @@ export const AppHeader = ({ user }: { user?: { id: string } }) => {
 			<div
 				className={css({
 					display: "grid",
-					justifyContent: "center",
+					gridAutoFlow: "column",
+					justifyContent: "start",
 					alignItems: "center",
+					gap: "8px",
 				})}
 			>
 				<Text size="3" weight="bold" asChild>
 					<Link to="/archives">アーカイブ</Link>
+				</Text>
+				<Text size="3" weight="bold" asChild>
+					<Link to="/sign-in-options">ログイン設定</Link>
 				</Text>
 			</div>
 			<div

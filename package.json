@@ -14,6 +14,11 @@
   "dependencies": {
     "@fastify/cookie": "^9.3.1",
     "@fastify/static": "^6.12.0",
+    "@fortawesome/fontawesome-svg-core": "^6.5.1",
+    "@fortawesome/free-brands-svg-icons": "^6.5.1",
+    "@fortawesome/free-regular-svg-icons": "^6.5.1",
+    "@fortawesome/free-solid-svg-icons": "^6.5.1",
+    "@fortawesome/react-fontawesome": "^0.2.0",
     "@mcansh/remix-fastify": "^3.2.1",
     "@prisma/client": "^5.8.1",
     "@radix-ui/themes": "^2.0.3",
