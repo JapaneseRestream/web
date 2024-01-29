@@ -6,8 +6,11 @@ import { trpc } from "../trpc.js";
 import { json, type LoaderFunctionArgs } from "@remix-run/node";
 import { createDiscordOauthUrl } from "../discord-oauth.server.js";
 import { useLoaderData } from "@remix-run/react";
+import { assertNoSession } from "../session.server.js";
 
-export const loader = (_: LoaderFunctionArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+	await assertNoSession(request);
+
 	const { url, setCookie } = createDiscordOauthUrl();
 
 	return json(

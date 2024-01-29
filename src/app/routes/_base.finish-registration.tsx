@@ -2,8 +2,12 @@ import { Button } from "@radix-ui/themes";
 import { css } from "../../../styled-system/css";
 import { json, useLoaderData } from "@remix-run/react";
 import { createDiscordOauthUrl } from "../discord-oauth.server";
+import { assertSession } from "../session.server";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 
-export const loader = () => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+	await assertSession(request);
+
 	const { url, setCookie } = createDiscordOauthUrl();
 	return json(
 		{ discordOauthUrl: url },
