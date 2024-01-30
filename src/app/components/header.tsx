@@ -65,7 +65,6 @@ export const AppHeader = ({ user }: { user?: { id: string } }) => {
 							onClick={() => {
 								signOut();
 							}}
-							className={css({ paddingLeft: "16px" })}
 						>
 							ログアウト
 						</Button>

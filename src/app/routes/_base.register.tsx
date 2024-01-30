@@ -8,6 +8,7 @@ import { assertNoSession } from "../session.server.js";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	await assertNoSession(request);
+	return null;
 };
 
 export default function Register() {

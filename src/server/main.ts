@@ -1,8 +1,8 @@
-import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { fastify } from "fastify";
 import { fastifyStatic } from "@fastify/static";
 import { fastifyCookie } from "@fastify/cookie";
+import { fastifyHelmet } from "@fastify/helmet";
 import {
 	createRequestHandler,
 	type RequestHandler,
@@ -11,25 +11,16 @@ import {
 	fastifyTRPCPlugin,
 	type FastifyTRPCPluginOptions,
 } from "@trpc/server/adapters/fastify";
-
 import { appRouter, type AppRouter } from "./router.js";
 import { env } from "../shared/env.server.js";
 import { createContext } from "./trpc.js";
 import { syncDataSource } from "./jobs/sync-data-source.js";
 
-const [sslKey, sslCert] = await Promise.all([
-	fs.readFile(env.SSL_KEY),
-	fs.readFile(env.SSL_CERT),
-]);
+const server = fastify({ maxParamLength: 5000 });
 
-const server = fastify({
-	maxParamLength: 5000,
-	http2: true,
-	https: {
-		key: sslKey,
-		cert: sslCert,
-	},
-});
+if (env.NODE_ENV === "production") {
+	await server.register(fastifyHelmet);
+}
 
 await server.register(fastifyCookie, {
 	secret: env.SESSION_COOKIE_SECRET,
@@ -96,7 +87,7 @@ if (process.env.NODE_ENV === "production") {
 }
 
 server.all("*", async (request, reply) => {
-	await handler(request as any, reply as any);
+	await handler(request, reply);
 });
 
 const address = await server.listen({
