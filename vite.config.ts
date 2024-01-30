@@ -12,14 +12,17 @@ export default defineConfig({
 		noExternal: ["@radix-ui/themes"],
 	},
 	server: {
-		https: {
-			cert: await fs.readFile(
-				"./local-proxy/www.japanese-restream.org.localhost.pem",
-			),
-			key: await fs.readFile(
-				"./local-proxy/www.japanese-restream.org.localhost-key.pem",
-			),
-		},
+		https:
+			process.env.NODE_ENV === "production"
+				? undefined
+				: {
+						cert: await fs.readFile(
+							"./local-proxy/www.japanese-restream.org.localhost.pem",
+						),
+						key: await fs.readFile(
+							"./local-proxy/www.japanese-restream.org.localhost-key.pem",
+						),
+					},
 	},
 	clearScreen: false,
 });
