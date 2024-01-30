@@ -1,0 +1,3 @@
+[submodule "vendors/passkey-authenticator-aaguids"]
+	path = vendors/passkey-authenticator-aaguids
+	url = https://github.com/passkeydeveloper/passkey-authenticator-aaguids.git

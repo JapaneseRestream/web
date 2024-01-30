@@ -8,6 +8,9 @@ import { prisma } from "../../shared/prisma.server";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDiscord } from "@fortawesome/free-brands-svg-icons";
 import { faEnvelope } from "@fortawesome/free-regular-svg-icons";
+import { faKey } from "@fortawesome/free-solid-svg-icons";
+import { trpc } from "../trpc";
+import { startRegistration } from "@simplewebauthn/browser";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const session = await assertSession(request);
@@ -34,6 +37,10 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 export default function FinishRegistration() {
 	const data = useLoaderData<typeof loader>();
+	const { mutateAsync: initializePasskeyRegistration } =
+		trpc.authentication.passkey.registration.initialize.useMutation();
+	const { mutateAsync: verifyPasskeyRegistration } =
+		trpc.authentication.passkey.registration.verify.useMutation();
 
 	return (
 		<div
@@ -41,10 +48,13 @@ export default function FinishRegistration() {
 				display: "grid",
 				alignContent: "start",
 				justifyContent: "center",
-				gap: "16px",
 			})}
 		>
-			<dl>
+			<dl
+				className={css({
+					"& > dd": { margin: "0 0 16px 16px" },
+				})}
+			>
 				<Text size="5" weight="bold" asChild>
 					<dt
 						className={css({
@@ -59,11 +69,9 @@ export default function FinishRegistration() {
 						<span>Eメールアドレス</span>
 					</dt>
 				</Text>
-				<dd className={css({ marginLeft: "16px" })}>
+				<dd>
 					<Code>{data.email}</Code>
 				</dd>
-			</dl>
-			<dl>
 				<Text size="5" weight="bold" asChild>
 					<dt
 						className={css({
@@ -80,7 +88,6 @@ export default function FinishRegistration() {
 				</Text>
 				<dd
 					className={css({
-						marginLeft: "16px",
 						display: "grid",
 						gridAutoFlow: "column",
 						justifyContent: "start",
@@ -100,6 +107,39 @@ export default function FinishRegistration() {
 							<a href={data.discordOauthUrl}>Discordアカウントを連携</a>
 						</Button>
 					)}
+				</dd>
+				<Text size="5" weight="bold" asChild>
+					<dt
+						className={css({
+							display: "grid",
+							gridAutoFlow: "column",
+							alignItems: "center",
+							justifyContent: "start",
+							gap: "4px",
+						})}
+					>
+						<FontAwesomeIcon icon={faKey} />
+						<span>パスキー</span>
+					</dt>
+				</Text>
+				<dd>
+					<Button
+						onClick={() => {
+							initializePasskeyRegistration()
+								.then((options) => {
+									return startRegistration(options);
+								})
+								.then((response) => {
+									return verifyPasskeyRegistration(response);
+								})
+								.catch((error) => {
+									console.error(error);
+									alert("エラーが発生しました");
+								});
+						}}
+					>
+						新規登録
+					</Button>
 				</dd>
 			</dl>
 		</div>
