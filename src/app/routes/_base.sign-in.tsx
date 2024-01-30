@@ -5,8 +5,9 @@ import { useForm } from "react-hook-form";
 import { trpc } from "../trpc.js";
 import { json, type LoaderFunctionArgs } from "@remix-run/node";
 import { createDiscordOauthUrl } from "../discord-oauth.server.js";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, useNavigate, useRevalidator } from "@remix-run/react";
 import { assertNoSession } from "../session.server.js";
+import { startAuthentication } from "@simplewebauthn/browser";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	await assertNoSession(request);
@@ -65,6 +66,13 @@ const EmailSignIn = () => {
 export default function SignIn() {
 	const [useEmail, setUseEmail] = useState(false);
 	const data = useLoaderData<typeof loader>();
+	const { mutateAsync: initializePasskeyAuthentication } =
+		trpc.authentication.passkey.authentication.initialize.useMutation();
+	const { mutateAsync: verifyPasskeyAuthentication } =
+		trpc.authentication.passkey.authentication.verify.useMutation();
+	const navigate = useNavigate();
+
+	const revalidator = useRevalidator();
 
 	return (
 		<div
@@ -79,7 +87,27 @@ export default function SignIn() {
 				<EmailSignIn />
 			) : (
 				<>
-					<Button disabled>パスキーでログイン</Button>
+					<Button
+						onClick={() => {
+							initializePasskeyAuthentication()
+								.then((options) => {
+									return startAuthentication(options);
+								})
+								.then((response) => {
+									return verifyPasskeyAuthentication(response);
+								})
+								.then(() => {
+									revalidator.revalidate();
+									navigate("/");
+								})
+								.catch((error) => {
+									console.error(error);
+									alert("エラーが発生しました");
+								});
+						}}
+					>
+						パスキーでログイン
+					</Button>
 					<Button asChild>
 						<a href={data.discordOauthUrl}>Discordでログイン</a>
 					</Button>

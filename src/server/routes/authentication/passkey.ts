@@ -1,13 +1,20 @@
 import {
+	generateAuthenticationOptions,
 	generateRegistrationOptions,
+	verifyAuthenticationResponse,
 	verifyRegistrationResponse,
 } from "@simplewebauthn/server";
-import type { AuthenticatorTransportFuture } from "@simplewebauthn/types";
-import { authenticatedProcedure, router } from "../../trpc";
+import type {
+	AuthenticatorTransportFuture,
+	RegistrationResponseJSON,
+	AuthenticationResponseJSON,
+} from "@simplewebauthn/types";
+import { authenticatedProcedure, publicProcedure, router } from "../../trpc";
 import { env } from "../../../shared/env.server";
 import { prisma } from "../../../shared/prisma.server";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
+import { createToken } from "../../../shared/create-token";
 
 const verifyRegistrationResponseSchema = z.object({
 	id: z.string(),
@@ -39,7 +46,25 @@ const verifyRegistrationResponseSchema = z.object({
 		hmacCreateSecret: z.boolean().optional(),
 	}),
 	type: z.enum(["public-key"]),
-});
+}) satisfies z.ZodType<RegistrationResponseJSON>;
+
+const verifyAuthenticationResponseSchema = z.object({
+	id: z.string(),
+	rawId: z.string(),
+	response: z.object({
+		clientDataJSON: z.string(),
+		authenticatorData: z.string(),
+		signature: z.string(),
+		userHandle: z.string().optional(),
+	}),
+	authenticatorAttachment: z.enum(["platform", "cross-platform"]).optional(),
+	clientExtensionResults: z.object({
+		appid: z.boolean().optional(),
+		credProps: z.object({ rk: z.boolean().optional() }).optional(),
+		hmacCreateSecret: z.boolean().optional(),
+	}),
+	type: z.enum(["public-key"]),
+}) satisfies z.ZodType<AuthenticationResponseJSON>;
 
 const passkeyRegisterationRouter = router({
 	initialize: authenticatedProcedure.mutation(async ({ ctx }) => {
@@ -62,6 +87,10 @@ const passkeyRegisterationRouter = router({
 				type: "public-key",
 				transports: authenticator.transports as AuthenticatorTransportFuture[],
 			})),
+			authenticatorSelection: {
+				residentKey: "required",
+				userVerification: "preferred",
+			},
 		});
 		await prisma.userPasskeyChallenge.upsert({
 			where: { userId: ctx.user.id },
@@ -90,6 +119,7 @@ const passkeyRegisterationRouter = router({
 				expectedChallenge: expectedChallenge.challenge,
 				expectedOrigin: env.SERVER_ORIGIN,
 				expectedRPID: env.PASSKEY_RP_ID,
+				requireUserVerification: true,
 			});
 			if (!verification.verified || !verification.registrationInfo) {
 				throw new TRPCError({ code: "BAD_REQUEST" });
@@ -115,7 +145,82 @@ const passkeyRegisterationRouter = router({
 		}),
 });
 
-const passkeyAuthenticationRouter = router({});
+const CHALLENGE_COOKIE_NAME = "passkey_challenge";
+
+const passkeyAuthenticationRouter = router({
+	initialize: publicProcedure.mutation(async ({ ctx }) => {
+		const options = await generateAuthenticationOptions({
+			rpID: env.PASSKEY_RP_ID,
+			userVerification: "preferred",
+		});
+		ctx.setCookie(CHALLENGE_COOKIE_NAME, options.challenge, { maxAge: 5 * 60 });
+		return options;
+	}),
+
+	verify: publicProcedure
+		.input(verifyAuthenticationResponseSchema)
+		.mutation(async ({ ctx, input }) => {
+			const expectedChallenge = ctx.readSignedCookie(CHALLENGE_COOKIE_NAME);
+			if (!expectedChallenge) {
+				throw new TRPCError({ code: "BAD_REQUEST", message: "no challenge" });
+			}
+			const authenticator = await prisma.userPasskeyAuthenticator.findUnique({
+				where: { credentialId: Buffer.from(input.id, "base64url") },
+				select: {
+					id: true,
+					credentialId: true,
+					credentialPublicKey: true,
+					counter: true,
+					transports: true,
+					user: {
+						select: {
+							id: true,
+						},
+					},
+				},
+			});
+			if (!authenticator) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: "authenticator not found",
+				});
+			}
+			const verification = await verifyAuthenticationResponse({
+				response: input,
+				expectedChallenge,
+				expectedOrigin: env.SERVER_ORIGIN,
+				expectedRPID: env.PASSKEY_RP_ID,
+				authenticator: {
+					credentialID: authenticator.credentialId,
+					credentialPublicKey: authenticator.credentialPublicKey,
+					counter: Number(authenticator.counter),
+					transports:
+						authenticator.transports as AuthenticatorTransportFuture[],
+				},
+				requireUserVerification: true,
+			});
+			if (!verification.verified) {
+				throw new TRPCError({ code: "BAD_REQUEST", message: "not verified" });
+			}
+			const newCounter = verification.authenticationInfo.newCounter;
+			const sessionToken = createToken();
+			await prisma.$transaction(async (tx) => {
+				await Promise.all([
+					tx.userPasskeyAuthenticator.update({
+						where: { id: authenticator.id },
+						data: { counter: newCounter },
+					}),
+					tx.userSession.create({
+						data: {
+							userId: authenticator.user.id,
+							token: sessionToken,
+						},
+					}),
+				]);
+			});
+			ctx.setSessionToken(sessionToken);
+		}),
+});
 
 export const passkeyRouter = router({
 	registration: passkeyRegisterationRouter,

@@ -8,34 +8,63 @@ import { validateSession } from "../shared/session.server.js";
 import { sessionCookieOptions } from "../shared/cookie.js";
 import { prisma } from "../shared/prisma.server.js";
 import { Role } from "@prisma/client";
+import { env } from "../shared/env.server.js";
+import type { CookieSerializeOptions } from "@fastify/cookie";
 
 export const createContext = async ({
 	req,
 	res,
 }: CreateFastifyContextOptions) => {
+	const setCookie = (
+		name: string,
+		value: string,
+		options?: CookieSerializeOptions,
+	) => {
+		res.setCookie(name, value, {
+			httpOnly: true,
+			sameSite: "strict",
+			path: "/",
+			secure: env.NODE_ENV === "production",
+			signed: true,
+			...options,
+		});
+	};
+
+	const readSignedCookie = (name: string) => {
+		const signed = req.cookies[name];
+		if (!signed) {
+			return;
+		}
+		const cookie = req.unsignCookie(signed);
+		if (!cookie.valid) {
+			return;
+		}
+		return cookie.value;
+	};
+
 	const setSessionToken = (token: string) => {
-		res.setCookie(SESSION_COOKIE_NAME, token, sessionCookieOptions);
+		setCookie(SESSION_COOKIE_NAME, token, sessionCookieOptions);
 	};
 
 	const discordOauthState = req.cookies[DISCORD_OAUTH_STATE_COOKIE_NAME];
 
-	const signedSessionToken = req.cookies[SESSION_COOKIE_NAME];
-	const unsignedToken =
-		typeof signedSessionToken === "string"
-			? req.unsignCookie(signedSessionToken)
-			: undefined;
+	const sessionToken = readSignedCookie(SESSION_COOKIE_NAME);
 
-	if (!unsignedToken?.valid || !unsignedToken.value) {
+	if (!sessionToken) {
 		return {
+			setCookie,
+			readSignedCookie,
 			setSessionToken,
 			discordOauthState,
 		};
 	}
 
 	return {
+		setCookie,
+		readSignedCookie,
 		setSessionToken,
 		discordOauthState,
-		sessionToken: unsignedToken.value,
+		sessionToken,
 	};
 };
 
