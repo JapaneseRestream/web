@@ -6,6 +6,7 @@ import { env } from "../../../shared/env.server";
 import { TRPCError } from "@trpc/server";
 import { createSession } from "../../../shared/session.server";
 import { VERIFY_TOKEN_DURATION } from "../../../shared/constants.server";
+import { sendEmail } from "../../email";
 
 export const emailAuthenticationRouter = router({
 	initialize: publicProcedure
@@ -24,7 +25,11 @@ export const emailAuthenticationRouter = router({
 				},
 			});
 			if (!user) {
-				console.log("user with the email does not exist");
+				await sendEmail({
+					to: input.email,
+					subject: "japanese-restream.org: ログイン",
+					body: "このEメールアドレスはユーザー登録されていません",
+				});
 				return;
 			}
 
@@ -46,7 +51,15 @@ export const emailAuthenticationRouter = router({
 			const url = new URL("/verify-email-authentication", env.SERVER_ORIGIN);
 			url.searchParams.set("token", token);
 
-			console.log(url.href);
+			await sendEmail({
+				to: input.email,
+				subject: "japanese-restream.org: ログイン",
+				body: [
+					"Japanese Restreamのウェブサイトにログインするには、以下のリンクをクリックしてください。",
+					url.href,
+					"このメールに心当たりがない場合は、このメールを無視してください。",
+				].join("\n\n"),
+			});
 		}),
 
 	verify: publicProcedure

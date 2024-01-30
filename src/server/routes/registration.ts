@@ -6,6 +6,7 @@ import { env } from "../../shared/env.server.js";
 import { TRPCError } from "@trpc/server";
 import { createSession } from "../../shared/session.server.js";
 import { VERIFY_TOKEN_DURATION } from "../../shared/constants.server.js";
+import { sendEmail } from "../email.js";
 
 export const registrationRouter = router({
 	initialize: publicProcedure
@@ -24,7 +25,11 @@ export const registrationRouter = router({
 				},
 			});
 			if (existingUser) {
-				console.log("user with the email already exists");
+				await sendEmail({
+					to: input.email,
+					subject: "japanese-restream.org: 新規登録",
+					body: "このEメールアドレスは既にユーザー登録されています",
+				});
 				return;
 			}
 
@@ -46,7 +51,15 @@ export const registrationRouter = router({
 			const url = new URL("/verify-registration", env.SERVER_ORIGIN);
 			url.searchParams.set("token", token);
 
-			console.log(url.href);
+			await sendEmail({
+				to: input.email,
+				subject: "japanese-restream.org: 新規登録",
+				body: [
+					"このメールは、japanese-restream.org にて新規登録を行ったことを確認するために送信されています。以下のリンクをクリックして新規登録を完了してください。",
+					url.href,
+					"もし、japanese-restream.org にて新規登録を行っていない場合は、このメールを破棄してください。",
+				].join("\n\n"),
+			});
 		}),
 
 	verify: publicProcedure
