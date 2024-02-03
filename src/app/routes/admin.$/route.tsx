@@ -1,8 +1,7 @@
 import "./index.css";
 
-import { redirect, type LoaderFunctionArgs } from "@remix-run/node";
+import { type LoaderFunctionArgs } from "@remix-run/node";
 import { Admin, Resource } from "react-admin";
-import { getSession } from "../../cookie.server";
 import { prisma } from "../../../shared/prisma.server";
 import { Role } from "@prisma/client";
 import { dataProvider } from "./data-provider";
@@ -14,12 +13,10 @@ import {
 import { UserList } from "./user";
 import { EventCreate, EventEdit, EventList } from "./event";
 import { RunEdit, RunList } from "./run";
+import { assertSession } from "../../session.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-	const session = await getSession(request);
-	if (!session) {
-		throw redirect("/sign-in");
-	}
+	const session = await assertSession(request);
 
 	const adminRole = await prisma.userRole.findFirst({
 		where: {
@@ -32,7 +29,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 	});
 
 	if (!adminRole) {
-		throw redirect("/");
+		throw new Response(null, { status: 404 });
 	}
 
 	return null;

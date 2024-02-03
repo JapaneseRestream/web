@@ -16,3 +16,5 @@ export const DISCORD_OAUTH_CALLBACK_URL = new URL(
 export const DISCORD_API = "https://discord.com/api/v10";
 
 export const VERIFY_TOKEN_DURATION = 3 * 60 * 1000;
+
+export const SIGN_IN_REDIRECT_COOKIE_NAME = "sign_in_redirect";

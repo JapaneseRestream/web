@@ -1,5 +1,5 @@
 import * as path from "node:path";
-import { fastify } from "fastify";
+import { fastify, type FastifyRequest } from "fastify";
 import { fastifyStatic } from "@fastify/static";
 import { fastifyCookie } from "@fastify/cookie";
 import { fastifyHelmet } from "@fastify/helmet";
@@ -16,11 +16,18 @@ import { env } from "../shared/env.server.js";
 import { createContext } from "./trpc.js";
 import { syncDataSource } from "./jobs/sync-data-source.js";
 
-const server = fastify({ maxParamLength: 5000 });
+const server = fastify({
+	maxParamLength: 5000,
+});
 
 if (env.NODE_ENV === "production") {
 	await server.register(fastifyHelmet);
 }
+
+server.addContentTypeParser(
+	"application/x-www-form-urlencoded",
+	async (request: FastifyRequest) => request,
+);
 
 await server.register(fastifyCookie, {
 	secret: env.SESSION_COOKIE_SECRET,

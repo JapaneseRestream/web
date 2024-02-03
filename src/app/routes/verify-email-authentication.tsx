@@ -1,37 +1,65 @@
-import { useEffect, useRef } from "react";
-import { trpc } from "../trpc";
-import { useNavigate } from "@remix-run/react";
-import { TRPCClientError } from "@trpc/client";
+import { redirect } from "@remix-run/react";
+import type { LoaderFunctionArgs } from "@remix-run/node";
+import { prisma } from "../../shared/prisma.server";
+import {
+	SIGN_IN_REDIRECT_COOKIE_NAME,
+	VERIFY_TOKEN_DURATION,
+} from "../../shared/constants.server";
+import { createSession } from "../../shared/session.server";
+import { parseCookie, serializeSessionToken } from "../cookie.server";
+import { Text } from "@radix-ui/themes";
+import { serialize } from "cookie";
 
-export default function VerifyEmailAuthentication() {
-	const navigate = useNavigate();
-	const { mutate: verify } = trpc.authentication.email.verify.useMutation({
-		onSuccess: () => {
-			navigate({ pathname: "/" });
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+	const url = new URL(request.url);
+	const authToken = url.searchParams.get("token");
+
+	if (!authToken) {
+		throw new Response("token is missing", { status: 400 });
+	}
+
+	const emailAuthentication = await prisma.emailAuthentication.findUnique({
+		where: {
+			token: authToken,
+			updatedAt: {
+				gt: new Date(Date.now() - VERIFY_TOKEN_DURATION),
+			},
 		},
-		onError: (error) => {
-			if (error instanceof TRPCClientError) {
-				if (error.message === "invalid token") {
-					alert("無効なトークンか有効期限が切れています");
-					navigate("/");
-					return;
-				}
-			}
-			alert("エラーが発生しました");
-			navigate("/");
+		select: {
+			userId: true,
 		},
 	});
+	if (!emailAuthentication) {
+		throw new Response("invalid token", { status: 400 });
+	}
+	await prisma.emailAuthentication.delete({
+		where: { token: authToken },
+	});
 
-	const running = useRef(false);
-	useEffect(() => {
-		if (running.current) {
-			return;
-		}
-		running.current = true;
-		const searchParams = new URLSearchParams(window.location.search);
-		const token = searchParams.get("token");
-		if (token) {
-			verify({ token });
-		}
-	}, []);
-}
+	const sessionToken = await createSession({
+		newUser: false,
+		userId: emailAuthentication.userId,
+	});
+
+	const serializedSesssionToken = serializeSessionToken(sessionToken);
+
+	const redirectUrl = parseCookie(request)[SIGN_IN_REDIRECT_COOKIE_NAME];
+
+	throw redirect(redirectUrl ?? "/", {
+		headers: [
+			["Set-Cookie", serializedSesssionToken],
+			[
+				"Set-Cookie",
+				serialize(SIGN_IN_REDIRECT_COOKIE_NAME, "", {
+					expires: new Date(0),
+				}),
+			],
+		],
+	});
+};
+
+export default () => null;
+
+export const ErrorBoundary = () => {
+	return <Text color="red">エラーが発生しました</Text>;
+};

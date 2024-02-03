@@ -1,0 +1,10 @@
+hosts:
+  www.japanese-restream.org.localhost:443:
+    listen:
+      port: 443
+      ssl:
+        certificate-file: /ssl/cert.pem
+        key-file: /ssl/key.pem
+    paths:
+      /:
+        proxy.reverse.url: http://host.docker.internal:3000

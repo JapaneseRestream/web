@@ -1,4 +1,3 @@
-import { parseArgs } from "node:util";
 import { PrismaClient, Role } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -232,14 +231,8 @@ const prodSeed = async () => {
 	});
 };
 
-const {
-	values: { environment },
-} = parseArgs({
-	options: { environment: { type: "string" } },
-});
-
-if (environment === "development") {
-	devSeed();
-} else if (environment === "production") {
+if (process.env.NODE_ENV === "production") {
 	prodSeed();
+} else {
+	devSeed();
 }
