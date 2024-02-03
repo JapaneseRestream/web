@@ -9,6 +9,7 @@ import { sendEmail } from "../../server/email";
 import { createToken } from "../../shared/create-token";
 import { env } from "../../shared/env.server";
 import { assertNoSession } from "../session.server";
+import { CenterLayout } from "../components/center-layout";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	await assertNoSession(request);
@@ -20,33 +21,37 @@ export default () => {
 
 	if (typeof data !== "undefined") {
 		return (
-			<Text>
-				メールを送信しました。メールに記載されたリンクをクリックしてください。
-			</Text>
+			<CenterLayout>
+				<Text>
+					メールを送信しました。メールに記載されたリンクをクリックしてください。
+				</Text>
+			</CenterLayout>
 		);
 	}
 
 	return (
-		<Form
-			method="post"
-			className={css({
-				display: "grid",
-				justifyItems: "end",
-				gap: "4px",
-			})}
-		>
-			<label className={css({ width: "250px" })}>
-				<Text>メールアドレス</Text>
-				<TextField.Input
-					type="email"
-					name="email"
-					inputMode="email"
-					autoComplete="email"
-					required
-				/>
-			</label>
-			<Button type="submit">ログイン</Button>
-		</Form>
+		<CenterLayout>
+			<Form
+				method="post"
+				className={css({
+					display: "grid",
+					justifyItems: "end",
+					gap: "4px",
+				})}
+			>
+				<label className={css({ width: "250px" })}>
+					<Text>メールアドレス</Text>
+					<TextField.Input
+						type="email"
+						name="email"
+						inputMode="email"
+						autoComplete="email"
+						required
+					/>
+				</label>
+				<Button type="submit">ログイン</Button>
+			</Form>
+		</CenterLayout>
 	);
 };
 

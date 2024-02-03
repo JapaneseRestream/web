@@ -1,5 +1,4 @@
 import {
-	generateAuthenticationOptions,
 	generateRegistrationOptions,
 	verifyAuthenticationResponse,
 	verifyRegistrationResponse,
@@ -15,6 +14,7 @@ import { prisma } from "../../../shared/prisma.server";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { createToken } from "../../../shared/create-token";
+import { PASSKEY_CHALLENGE_COOKIE_NAME } from "../../../shared/constants.server";
 
 const verifyRegistrationResponseSchema = z.object({
 	id: z.string(),
@@ -145,22 +145,13 @@ const passkeyRegisterationRouter = router({
 		}),
 });
 
-const CHALLENGE_COOKIE_NAME = "passkey_challenge";
-
 const passkeyAuthenticationRouter = router({
-	initialize: publicProcedure.mutation(async ({ ctx }) => {
-		const options = await generateAuthenticationOptions({
-			rpID: env.PASSKEY_RP_ID,
-			userVerification: "preferred",
-		});
-		ctx.setCookie(CHALLENGE_COOKIE_NAME, options.challenge, { maxAge: 5 * 60 });
-		return options;
-	}),
-
 	verify: publicProcedure
 		.input(verifyAuthenticationResponseSchema)
 		.mutation(async ({ ctx, input }) => {
-			const expectedChallenge = ctx.readSignedCookie(CHALLENGE_COOKIE_NAME);
+			const expectedChallenge = ctx.readSignedCookie(
+				PASSKEY_CHALLENGE_COOKIE_NAME,
+			);
 			if (!expectedChallenge) {
 				throw new TRPCError({ code: "BAD_REQUEST", message: "no challenge" });
 			}

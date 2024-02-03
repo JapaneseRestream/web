@@ -18,3 +18,5 @@ export const DISCORD_API = "https://discord.com/api/v10";
 export const VERIFY_TOKEN_DURATION = 3 * 60 * 1000;
 
 export const SIGN_IN_REDIRECT_COOKIE_NAME = "sign_in_redirect";
+
+export const PASSKEY_CHALLENGE_COOKIE_NAME = "passkey_challenge";

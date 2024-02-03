@@ -1,4 +1,4 @@
-import cookie from "cookie";
+import cookie, { type CookieSerializeOptions } from "cookie";
 import cookieSignature from "cookie-signature";
 import {
 	ACTIVITY_COOKIE_NAME,
@@ -48,14 +48,19 @@ export const getSession = async (request: Request) => {
 	return session;
 };
 
+export const serializeCookie = (
+	name: string,
+	value: string,
+	options?: CookieSerializeOptions,
+) => {
+	const signedValue = cookieSignature.sign(value, env.SESSION_COOKIE_SECRET);
+	return cookie.serialize(name, signedValue, options);
+};
+
 export const serializeSessionToken = (sessionToken: string) => {
-	const signedSessionToken = cookieSignature.sign(
-		sessionToken,
-		env.SESSION_COOKIE_SECRET,
-	);
-	return cookie.serialize(
+	return serializeCookie(
 		SESSION_COOKIE_NAME,
-		signedSessionToken,
+		sessionToken,
 		sessionCookieOptions,
 	);
 };

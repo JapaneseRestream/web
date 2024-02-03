@@ -9,42 +9,45 @@ import { prisma } from "../../shared/prisma.server.js";
 import { sendEmail } from "../../server/email.js";
 import { createToken } from "../../shared/create-token.js";
 import { env } from "../../shared/env.server.js";
+import { CenterLayout } from "../components/center-layout.js";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	await assertNoSession(request);
 	return null;
 };
 
-export default function Register() {
+export default () => {
 	const data = useActionData<typeof action>();
 
-	if (typeof data !== "undefined") {
-		return <div>確認メールを送信しました</div>;
-	}
-
 	return (
-		<Form
-			method="post"
-			className={css({
-				display: "grid",
-				justifyItems: "end",
-				gap: "4px",
-			})}
-		>
-			<label className={css({ width: "250px" })}>
-				<Text>メールアドレス</Text>
-				<TextField.Input
-					name="email"
-					type="email"
-					inputMode="email"
-					autoComplete="email"
-					required
-				/>
-			</label>
-			<Button type="submit">登録</Button>
-		</Form>
+		<CenterLayout>
+			{typeof data === "undefined" ? (
+				<Form
+					method="post"
+					className={css({
+						display: "grid",
+						justifyItems: "end",
+						gap: "4px",
+					})}
+				>
+					<label className={css({ width: "250px" })}>
+						<Text>メールアドレス</Text>
+						<TextField.Input
+							name="email"
+							type="email"
+							inputMode="email"
+							autoComplete="email"
+							required
+						/>
+					</label>
+					<Button type="submit">登録</Button>
+				</Form>
+			) : (
+				<Text>確認メールを送信しました</Text>
+			)}
+		</CenterLayout>
 	);
-}
+};
 
 export const ErrorBoundary = () => {
 	return <Text color="red">エラーが発生しました</Text>;

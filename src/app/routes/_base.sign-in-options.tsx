@@ -11,6 +11,7 @@ import { faEnvelope } from "@fortawesome/free-regular-svg-icons";
 import { faKey } from "@fortawesome/free-solid-svg-icons";
 import { trpc } from "../trpc";
 import { startRegistration } from "@simplewebauthn/browser";
+import { CenterLayout } from "../components/center-layout";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const session = await assertSession(request);
@@ -43,13 +44,7 @@ export default function FinishRegistration() {
 		trpc.authentication.passkey.registration.verify.useMutation();
 
 	return (
-		<div
-			className={css({
-				display: "grid",
-				alignContent: "start",
-				justifyContent: "center",
-			})}
-		>
+		<CenterLayout>
 			<dl
 				className={css({
 					"& > dd": { margin: "0 0 16px 16px" },
@@ -142,6 +137,6 @@ export default function FinishRegistration() {
 					</Button>
 				</dd>
 			</dl>
-		</div>
+		</CenterLayout>
 	);
 }

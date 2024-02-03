@@ -11,22 +11,42 @@ import {
 } from "@remix-run/react";
 import { assertNoSession } from "../session.server.js";
 import { startAuthentication } from "@simplewebauthn/browser";
+import { CenterLayout } from "../components/center-layout.js";
+import { generateAuthenticationOptions } from "@simplewebauthn/server";
+import { env } from "../../shared/env.server.js";
+import { PASSKEY_CHALLENGE_COOKIE_NAME } from "../../shared/constants.server.js";
+import { serializeCookie } from "../cookie.server.js";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	await assertNoSession(request);
 
-	const { url, setCookie } = createDiscordOauthUrl();
+	const { url: discordOauthUrl, setCookie: discordOauthStateCookie } =
+		createDiscordOauthUrl();
+
+	const passkeyOptions = await generateAuthenticationOptions({
+		rpID: env.PASSKEY_RP_ID,
+		userVerification: "preferred",
+	});
 
 	return json(
-		{ discordOauthUrl: url },
-		{ headers: [["Set-Cookie", setCookie]] },
+		{ discordOauthUrl, passkeyOptions },
+		{
+			headers: [
+				["Set-Cookie", discordOauthStateCookie],
+				[
+					"Set-Cookie",
+					serializeCookie(
+						PASSKEY_CHALLENGE_COOKIE_NAME,
+						passkeyOptions.challenge,
+					),
+				],
+			],
+		},
 	);
 };
 
 export default function SignIn() {
 	const data = useLoaderData<typeof loader>();
-	const { mutateAsync: initializePasskeyAuthentication } =
-		trpc.authentication.passkey.authentication.initialize.useMutation();
 	const { mutateAsync: verifyPasskeyAuthentication } =
 		trpc.authentication.passkey.authentication.verify.useMutation();
 	const navigate = useNavigate();
@@ -34,20 +54,10 @@ export default function SignIn() {
 	const revalidator = useRevalidator();
 
 	return (
-		<div
-			className={css({
-				display: "grid",
-				alignContent: "start",
-				justifyContent: "center",
-				gap: "8px",
-			})}
-		>
+		<CenterLayout className={css({ gap: "8px" })}>
 			<Button
 				onClick={() => {
-					initializePasskeyAuthentication()
-						.then((options) => {
-							return startAuthentication(options);
-						})
+					startAuthentication(data.passkeyOptions)
 						.then((response) => {
 							return verifyPasskeyAuthentication(response);
 						})
@@ -69,6 +79,6 @@ export default function SignIn() {
 			<Button asChild>
 				<Link to="email">Eメールでログイン</Link>
 			</Button>
-		</div>
+		</CenterLayout>
 	);
 }
