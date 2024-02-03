@@ -1,4 +1,5 @@
 import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
+import { env } from "../shared/env.server";
 
 const sesClient = new SESv2Client({ region: "ap-northeast-1" });
 
@@ -7,7 +8,7 @@ export const sendEmail = async (props: {
 	subject: string;
 	body: string;
 }) => {
-	if (process.env.NODE_ENV !== "production") {
+	if (env.NODE_ENV !== "production") {
 		console.log(props);
 		return;
 	}

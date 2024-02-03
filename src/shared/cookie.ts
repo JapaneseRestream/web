@@ -1,4 +1,4 @@
-import { SESSION_TOKEN_DURATION } from "./constants.server.js";
+import { SESSION_TOKEN_DURATION } from "./constants.js";
 import { env } from "./env.server.js";
 
 export const sessionCookieOptions = {

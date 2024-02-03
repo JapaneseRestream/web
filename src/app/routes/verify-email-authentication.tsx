@@ -4,7 +4,7 @@ import { prisma } from "../../shared/prisma.server";
 import {
 	SIGN_IN_REDIRECT_COOKIE_NAME,
 	VERIFY_TOKEN_DURATION,
-} from "../../shared/constants.server";
+} from "../../shared/constants";
 import { createSession } from "../../shared/session.server";
 import { parseCookie, serializeSessionToken } from "../cookie.server";
 import { Text } from "@radix-ui/themes";

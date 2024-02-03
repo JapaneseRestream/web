@@ -1,13 +1,13 @@
 import { z } from "zod";
 import { publicProcedure, router } from "../../trpc";
 import { env } from "../../../shared/env.server";
-import { DISCORD_OAUTH_CALLBACK_URL } from "../../../shared/constants.server";
 import ky from "ky";
 import { TRPCError } from "@trpc/server";
 import { Routes } from "discord.js";
 import { apiUrl } from "../../discord-api";
 import { prisma } from "../../../shared/prisma.server";
 import { createSession } from "../../../shared/session.server";
+import { DISCORD_OAUTH_CALLBACK_PATH } from "../../../shared/constants";
 
 export const discordAuthenticationRouter = router({
 	verify: publicProcedure
@@ -31,7 +31,8 @@ export const discordAuthenticationRouter = router({
 				client_secret: env.DISCORD_CLIENT_SECRET,
 				grant_type: "authorization_code",
 				code: input.code,
-				redirect_uri: DISCORD_OAUTH_CALLBACK_URL,
+				redirect_uri: new URL(DISCORD_OAUTH_CALLBACK_PATH, env.SERVER_ORIGIN)
+					.href,
 				scope: "identify",
 			});
 			const data = await ky

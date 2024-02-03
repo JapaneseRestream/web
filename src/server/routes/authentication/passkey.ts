@@ -14,7 +14,7 @@ import { prisma } from "../../../shared/prisma.server";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { createToken } from "../../../shared/create-token";
-import { PASSKEY_CHALLENGE_COOKIE_NAME } from "../../../shared/constants.server";
+import { PASSKEY_CHALLENGE_COOKIE_NAME } from "../../../shared/constants";
 
 const verifyRegistrationResponseSchema = z.object({
 	id: z.string(),

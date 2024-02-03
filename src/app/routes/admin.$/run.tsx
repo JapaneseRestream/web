@@ -17,7 +17,7 @@ import { secondsToDurationStr } from "../../../shared/duration";
 export const RunList = () => (
 	<List
 		filters={[<ReferenceInput source="eventId" reference="event" />]}
-		pagination={<Pagination rowsPerPageOptions={[50, 100, 200]} />}
+		pagination={<Pagination perPage={50} rowsPerPageOptions={[50, 100, 200]} />}
 		sort={{ field: "order", order: "ASC" }}
 	>
 		<Datagrid rowClick="edit">

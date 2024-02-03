@@ -1,8 +1,8 @@
 import cookie from "cookie";
 import {
-	DISCORD_OAUTH_CALLBACK_URL,
+	DISCORD_OAUTH_CALLBACK_PATH,
 	DISCORD_OAUTH_STATE_COOKIE_NAME,
-} from "../shared/constants.server";
+} from "../shared/constants";
 import { createToken } from "../shared/create-token";
 import { env } from "../shared/env.server";
 
@@ -15,7 +15,10 @@ export const createDiscordOauthUrl = () => {
 	url.searchParams.set("client_id", env.DISCORD_CLIENT_ID);
 	url.searchParams.set("scope", "identify");
 	url.searchParams.set("state", state);
-	url.searchParams.set("redirect_uri", DISCORD_OAUTH_CALLBACK_URL);
+	url.searchParams.set(
+		"redirect_uri",
+		new URL(DISCORD_OAUTH_CALLBACK_PATH, env.SERVER_ORIGIN).href,
+	);
 
 	const stateSetCookie = cookie.serialize(
 		DISCORD_OAUTH_STATE_COOKIE_NAME,

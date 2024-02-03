@@ -14,7 +14,7 @@ import { startAuthentication } from "@simplewebauthn/browser";
 import { CenterLayout } from "../components/center-layout.js";
 import { generateAuthenticationOptions } from "@simplewebauthn/server";
 import { env } from "../../shared/env.server.js";
-import { PASSKEY_CHALLENGE_COOKIE_NAME } from "../../shared/constants.server.js";
+import { PASSKEY_CHALLENGE_COOKIE_NAME } from "../../shared/constants.js";
 import { serializeCookie } from "../cookie.server.js";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {

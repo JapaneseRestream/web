@@ -1,7 +1,7 @@
 import { redirect } from "@remix-run/react";
-import { type LoaderFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 import { prisma } from "../../shared/prisma.server.js";
-import { VERIFY_TOKEN_DURATION } from "../../shared/constants.server.js";
+import { VERIFY_TOKEN_DURATION } from "../../shared/constants.js";
 import { serializeSessionToken } from "../cookie.server.js";
 import { createSession } from "../../shared/session.server.js";
 import { Text } from "@radix-ui/themes";

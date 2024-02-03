@@ -1,6 +1,6 @@
 import "./index.css";
 
-import { type LoaderFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 import { Admin, Resource } from "react-admin";
 import { prisma } from "../../../shared/prisma.server";
 import { Role } from "@prisma/client";
