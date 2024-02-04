@@ -8,3 +8,8 @@ hosts:
     paths:
       /:
         proxy.reverse.url: http://host.docker.internal:3000
+      /assets:
+        file.dir: /www/assets
+        expires: 1 year
+        header.set:
+          - "X-Content-Type-Options: nosniff"

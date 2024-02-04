@@ -9,6 +9,7 @@ services:
       - ./local-proxy/h2o.yaml:/usr/local/etc/h2o.conf
       - ./local-proxy/www.japanese-restream.org.localhost.pem:/ssl/cert.pem
       - ./local-proxy/www.japanese-restream.org.localhost-key.pem:/ssl/key.pem
+      - ./build/client/assets:/www/assets
   db:
     image: postgres:16.1
     volumes:

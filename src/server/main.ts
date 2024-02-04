@@ -1,8 +1,5 @@
-import * as path from "node:path";
-
 import { fastifyCookie } from "@fastify/cookie";
 import { fastifyHelmet } from "@fastify/helmet";
-import { fastifyStatic } from "@fastify/static";
 import {
 	createRequestHandler,
 	type RequestHandler,
@@ -12,7 +9,6 @@ import {
 	type FastifyTRPCPluginOptions,
 } from "@trpc/server/adapters/fastify";
 import { fastify, type FastifyRequest } from "fastify";
-
 
 import { env } from "../shared/env.server.js";
 
@@ -24,9 +20,10 @@ const server = fastify({
 	maxParamLength: 5000,
 });
 
-if (env.NODE_ENV === "production") {
-	await server.register(fastifyHelmet);
-}
+await server.register(fastifyHelmet, {
+	hsts: env.NODE_ENV === "production",
+	contentSecurityPolicy: false,
+});
 
 server.addContentTypeParser(
 	"application/x-www-form-urlencoded",
@@ -51,32 +48,6 @@ await server.register(fastifyTRPCPlugin, {
 let handler: RequestHandler;
 
 if (process.env.NODE_ENV === "production") {
-	await server.register(fastifyStatic, {
-		root: path.join(import.meta.dirname, "../build/client/assets"),
-		prefix: "/assets",
-		wildcard: true,
-		decorateReply: false,
-		cacheControl: true,
-		dotfiles: "allow",
-		etag: true,
-		maxAge: "1y",
-		immutable: true,
-		serveDotFiles: true,
-		lastModified: true,
-	});
-
-	await server.register(fastifyStatic, {
-		root: path.join(import.meta.dirname, "../build/client"),
-		prefix: "/",
-		wildcard: false,
-		cacheControl: true,
-		dotfiles: "allow",
-		etag: true,
-		maxAge: "1h",
-		serveDotFiles: true,
-		lastModified: true,
-	});
-
 	handler = createRequestHandler({
 		// @ts-expect-error - this is fine
 		build: await import("../../build/server/index.js"),
