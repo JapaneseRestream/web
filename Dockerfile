@@ -15,6 +15,7 @@ RUN npx prisma generate
 
 COPY panda.config.ts postcss.config.cjs tsconfig.json vite.config.ts ./
 COPY src src
+COPY vendor vendor
 
 RUN NODE_ENV=production npm run build
 
