@@ -1,6 +1,6 @@
-import { Button, Code, Text } from "@radix-ui/themes";
+import { Button, Code, IconButton, Table, Text } from "@radix-ui/themes";
 import { css } from "../../../styled-system/css";
-import { json, useLoaderData } from "@remix-run/react";
+import { json, useLoaderData, useRevalidator } from "@remix-run/react";
 import { createDiscordOauthUrl } from "../discord-oauth.server";
 import { assertSession } from "../session.server";
 import type { LoaderFunctionArgs } from "@remix-run/node";
@@ -12,25 +12,47 @@ import { faKey } from "@fortawesome/free-solid-svg-icons";
 import { trpc } from "../trpc";
 import { startRegistration } from "@simplewebauthn/browser";
 import { CenterLayout } from "../components/center-layout";
+import { getPasskeyName } from "../../server/lib/passkey-aaguid";
+import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const session = await assertSession(request);
 
-	const { url, setCookie } = createDiscordOauthUrl();
+	const { url: discordOauthUrl, setCookie } = createDiscordOauthUrl();
 
-	const userDiscord = await prisma.userDiscord.findUnique({
-		where: { userId: session.user.id },
-		select: {
-			username: true,
-		},
-	});
+	const [userDiscord, authenticators] = await Promise.all([
+		prisma.userDiscord.findUnique({
+			where: { userId: session.user.id },
+			select: {
+				username: true,
+			},
+		}),
+		prisma.userPasskeyAuthenticator.findMany({
+			where: { userId: session.user.id },
+			select: {
+				id: true,
+				aaguid: true,
+				createdAt: true,
+				lastUsedAt: true,
+			},
+			orderBy: [{ lastUsedAt: "desc" }, { createdAt: "desc" }],
+		}),
+	]);
 	const discordUsername = userDiscord?.username;
+
+	const passkeys = authenticators.map((authenticator) => ({
+		id: authenticator.id,
+		name: getPasskeyName(authenticator.aaguid),
+		createdAt: authenticator.createdAt,
+		lastUsedAt: authenticator.lastUsedAt,
+	}));
 
 	return json(
 		{
 			email: session.user.email,
 			discordUsername,
-			discordOauthUrl: url,
+			discordOauthUrl,
+			passkeys,
 		},
 		{ headers: [["Set-Cookie", setCookie]] },
 	);
@@ -42,6 +64,10 @@ export default function FinishRegistration() {
 		trpc.authentication.passkey.registration.initialize.useMutation();
 	const { mutateAsync: verifyPasskeyRegistration } =
 		trpc.authentication.passkey.registration.verify.useMutation();
+	const { mutateAsync: deletePasskey } =
+		trpc.authentication.passkey.delete.useMutation();
+
+	const revalidator = useRevalidator();
 
 	return (
 		<CenterLayout>
@@ -120,21 +146,71 @@ export default function FinishRegistration() {
 				<dd>
 					<Button
 						onClick={() => {
-							initializePasskeyRegistration()
-								.then((options) => {
-									return startRegistration(options);
-								})
-								.then((response) => {
-									return verifyPasskeyRegistration(response);
-								})
-								.catch((error) => {
+							(async () => {
+								try {
+									const options = await initializePasskeyRegistration();
+									const response = await startRegistration(options);
+									await verifyPasskeyRegistration(response);
+									revalidator.revalidate();
+								} catch (error) {
 									console.error(error);
 									alert("エラーが発生しました");
-								});
+								}
+							})();
 						}}
 					>
 						新規登録
 					</Button>
+					<Table.Root>
+						<Table.Header>
+							<Table.Row>
+								<Table.ColumnHeaderCell>名前</Table.ColumnHeaderCell>
+								<Table.ColumnHeaderCell>登録日時</Table.ColumnHeaderCell>
+								<Table.ColumnHeaderCell>使用日時</Table.ColumnHeaderCell>
+								<Table.ColumnHeaderCell></Table.ColumnHeaderCell>
+							</Table.Row>
+						</Table.Header>
+						<Table.Body>
+							{data.passkeys.map((passkey) => (
+								<Table.Row key={passkey.id}>
+									<Table.Cell>{passkey.name}</Table.Cell>
+									<Table.Cell>
+										{new Date(passkey.createdAt).toLocaleString()}
+									</Table.Cell>
+									<Table.Cell>
+										{passkey.lastUsedAt
+											? new Date(passkey.lastUsedAt).toLocaleString()
+											: "-"}
+									</Table.Cell>
+									<Table.Cell>
+										<IconButton
+											size="1"
+											color="red"
+											onClick={() => {
+												if (
+													confirm(
+														`本当にこのパスキーを削除しますか? (${passkey.name})`,
+													)
+												) {
+													(async () => {
+														try {
+															await deletePasskey({ id: passkey.id });
+															revalidator.revalidate();
+														} catch (error) {
+															console.error(error);
+															alert("エラーが発生しました");
+														}
+													})();
+												}
+											}}
+										>
+											<FontAwesomeIcon icon={faTrashCan} />
+										</IconButton>
+									</Table.Cell>
+								</Table.Row>
+							))}
+						</Table.Body>
+					</Table.Root>
 				</dd>
 			</dl>
 		</CenterLayout>

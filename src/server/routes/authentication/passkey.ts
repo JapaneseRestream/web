@@ -124,7 +124,6 @@ const passkeyRegisterationRouter = router({
 			if (!verification.verified || !verification.registrationInfo) {
 				throw new TRPCError({ code: "BAD_REQUEST" });
 			}
-			console.log(verification.registrationInfo.aaguid);
 			await prisma.userPasskeyAuthenticator.create({
 				data: {
 					userId: ctx.user.id,
@@ -199,7 +198,10 @@ const passkeyAuthenticationRouter = router({
 				await Promise.all([
 					tx.userPasskeyAuthenticator.update({
 						where: { id: authenticator.id },
-						data: { counter: newCounter },
+						data: {
+							counter: newCounter,
+							lastUsedAt: new Date(),
+						},
 					}),
 					tx.userSession.create({
 						data: {
@@ -216,4 +218,14 @@ const passkeyAuthenticationRouter = router({
 export const passkeyRouter = router({
 	registration: passkeyRegisterationRouter,
 	authentication: passkeyAuthenticationRouter,
+	delete: authenticatedProcedure
+		.input(z.object({ id: z.string().uuid() }))
+		.mutation(async ({ ctx, input }) => {
+			await prisma.userPasskeyAuthenticator.delete({
+				where: {
+					id: input.id,
+					userId: ctx.user.id,
+				},
+			});
+		}),
 });

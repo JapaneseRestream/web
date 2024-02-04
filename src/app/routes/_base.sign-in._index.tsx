@@ -14,8 +14,12 @@ import { startAuthentication } from "@simplewebauthn/browser";
 import { CenterLayout } from "../components/center-layout.js";
 import { generateAuthenticationOptions } from "@simplewebauthn/server";
 import { env } from "../../shared/env.server.js";
-import { PASSKEY_CHALLENGE_COOKIE_NAME } from "../../shared/constants.js";
+import {
+	PASSKEY_CHALLENGE_COOKIE_NAME,
+	SIGN_IN_REDIRECT_COOKIE_NAME,
+} from "../../shared/constants.js";
 import { serializeCookie } from "../cookie.server.js";
+import { parse } from "cookie";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	await assertNoSession(request);
@@ -63,7 +67,10 @@ export default function SignIn() {
 						})
 						.then(() => {
 							revalidator.revalidate();
-							navigate("/");
+							const redirectUrl = parse(document.cookie)[
+								SIGN_IN_REDIRECT_COOKIE_NAME
+							];
+							navigate(redirectUrl ?? "/");
 						})
 						.catch((error) => {
 							console.error(error);
