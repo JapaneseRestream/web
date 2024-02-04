@@ -146,7 +146,7 @@ export default function FinishRegistration() {
 				<dd>
 					<Button
 						onClick={() => {
-							(async () => {
+							void (async () => {
 								try {
 									const options = await initializePasskeyRegistration();
 									const response = await startRegistration(options);
@@ -192,7 +192,7 @@ export default function FinishRegistration() {
 														`本当にこのパスキーを削除しますか? (${passkey.name})`,
 													)
 												) {
-													(async () => {
+													void (async () => {
 														try {
 															await deletePasskey({ id: passkey.id });
 															revalidator.revalidate();

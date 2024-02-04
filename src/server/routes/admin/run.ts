@@ -65,7 +65,7 @@ export const runRouter = router({
 			throw new TRPCError({ code: "NOT_IMPLEMENTED" });
 		}),
 
-	create: adminProcedure.mutation(async () => {
+	create: adminProcedure.mutation(() => {
 		throw new TRPCError({ code: "NOT_IMPLEMENTED" });
 	}),
 

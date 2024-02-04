@@ -30,5 +30,5 @@ export default function CallbackDiscord() {
 		}
 
 		verify({ code, state });
-	}, []);
+	}, [navigate, verify]);
 }

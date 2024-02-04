@@ -26,7 +26,7 @@ if (env.NODE_ENV === "production") {
 
 server.addContentTypeParser(
 	"application/x-www-form-urlencoded",
-	async (request: FastifyRequest) => request,
+	(request: FastifyRequest) => request,
 );
 
 await server.register(fastifyCookie, {
@@ -74,7 +74,7 @@ if (process.env.NODE_ENV === "production") {
 	});
 
 	handler = createRequestHandler({
-		// @ts-expect-error
+		// @ts-expect-error - this is fine
 		build: await import("../../build/server/index.js"),
 	});
 } else {
@@ -88,7 +88,9 @@ if (process.env.NODE_ENV === "production") {
 	await server.use(viteDevServer.middlewares);
 
 	handler = createRequestHandler({
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		build: (() =>
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			viteDevServer.ssrLoadModule("virtual:remix/server-build")) as any,
 	});
 }

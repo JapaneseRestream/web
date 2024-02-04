@@ -11,16 +11,13 @@ import { Role } from "@prisma/client";
 import { env } from "../shared/env.server.js";
 import type { CookieSerializeOptions } from "@fastify/cookie";
 
-export const createContext = async ({
-	req,
-	res,
-}: CreateFastifyContextOptions) => {
+export const createContext = ({ req, res }: CreateFastifyContextOptions) => {
 	const setCookie = (
 		name: string,
 		value: string,
 		options?: CookieSerializeOptions,
 	) => {
-		res.setCookie(name, value, {
+		void res.setCookie(name, value, {
 			httpOnly: true,
 			sameSite: "strict",
 			path: "/",

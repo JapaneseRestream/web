@@ -44,14 +44,16 @@ export default function AdminPage() {
 				list={EventGroupList}
 				edit={EventGroupEdit}
 				create={EventGroupCreate}
-				recordRepresentation={(record) => record.shortName}
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+				recordRepresentation={(record) => record.shortName as string}
 			/>
 			<Resource
 				name="event"
 				list={EventList}
 				edit={EventEdit}
 				create={EventCreate}
-				recordRepresentation={(record) => record.shortName}
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+				recordRepresentation={(record) => record.shortName as string}
 			/>
 			<Resource name="run" list={RunList} edit={RunEdit} />
 		</Admin>
