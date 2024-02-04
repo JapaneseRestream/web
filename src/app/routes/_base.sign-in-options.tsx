@@ -1,19 +1,20 @@
-import { Button, Code, IconButton, Table, Text } from "@radix-ui/themes";
-import { css } from "../../../styled-system/css";
-import { json, useLoaderData, useRevalidator } from "@remix-run/react";
-import { createDiscordOauthUrl } from "../discord-oauth.server";
-import { assertSession } from "../session.server";
-import type { LoaderFunctionArgs } from "@remix-run/node";
-import { prisma } from "../../shared/prisma.server";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDiscord } from "@fortawesome/free-brands-svg-icons";
 import { faEnvelope } from "@fortawesome/free-regular-svg-icons";
-import { faKey } from "@fortawesome/free-solid-svg-icons";
-import { trpc } from "../trpc";
-import { startRegistration } from "@simplewebauthn/browser";
-import { CenterLayout } from "../components/center-layout";
-import { getPasskeyName } from "../../server/lib/passkey-aaguid";
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
+import { faKey } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Button, Code, IconButton, Table, Text } from "@radix-ui/themes";
+import type { LoaderFunctionArgs } from "@remix-run/node";
+import { json, useLoaderData, useRevalidator } from "@remix-run/react";
+import { startRegistration } from "@simplewebauthn/browser";
+
+import { css } from "../../../styled-system/css";
+import { getPasskeyName } from "../../server/lib/passkey-aaguid";
+import { prisma } from "../../shared/prisma.server";
+import { CenterLayout } from "../components/center-layout";
+import { createDiscordOauthUrl } from "../discord-oauth.server";
+import { assertSession } from "../session.server";
+import { trpc } from "../trpc";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const session = await assertSession(request);

@@ -1,14 +1,16 @@
-import { redirect } from "@remix-run/react";
+import { Text } from "@radix-ui/themes";
 import type { LoaderFunctionArgs } from "@remix-run/node";
-import { prisma } from "../../shared/prisma.server";
+import { redirect } from "@remix-run/react";
+import { serialize } from "cookie";
+
 import {
 	SIGN_IN_REDIRECT_COOKIE_NAME,
 	VERIFY_TOKEN_DURATION,
 } from "../../shared/constants";
+import { prisma } from "../../shared/prisma.server";
 import { createSession } from "../../shared/session.server";
 import { parseCookie, serializeSessionToken } from "../cookie.server";
-import { Text } from "@radix-ui/themes";
-import { serialize } from "cookie";
+
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const url = new URL(request.url);

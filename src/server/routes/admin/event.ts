@@ -1,7 +1,10 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+
+import { dataSourceType } from "../../../shared/constants";
 import { prisma } from "../../../shared/prisma.server";
 import { adminProcedure, router } from "../../trpc";
-import { TRPCError } from "@trpc/server";
+
 import {
 	getListParamsSchema,
 	getOneParamsSchema,
@@ -11,7 +14,7 @@ import {
 	createParamsSchema,
 	getManyReferenceParamsSchema,
 } from "./helper";
-import { dataSourceType } from "../../../shared/constants";
+
 
 const eventSchema = z.object({
 	eventGroupId: z.string(),

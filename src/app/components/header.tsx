@@ -1,7 +1,8 @@
 import { Button, Text } from "@radix-ui/themes";
+import { Link, useRevalidator } from "@remix-run/react";
+
 import { css } from "../../../styled-system/css/css.js";
 import icon from "../images/icon.png";
-import { Link, useRevalidator } from "@remix-run/react";
 import { trpc } from "../trpc.js";
 
 export const AppHeader = ({ user }: { user?: { id: string } }) => {

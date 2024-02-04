@@ -1,14 +1,15 @@
 import cookie, { type CookieSerializeOptions } from "cookie";
 import cookieSignature from "cookie-signature";
+
 import {
 	ACTIVITY_COOKIE_NAME,
 	SESSION_COOKIE_NAME,
 } from "../shared/constants.js";
-import { env } from "../shared/env.server.js";
 import {
 	activityCookieOptions,
 	sessionCookieOptions,
 } from "../shared/cookie.js";
+import { env } from "../shared/env.server.js";
 import { validateSession } from "../shared/session.server.js";
 
 export const parseCookie = (request: Request) => {

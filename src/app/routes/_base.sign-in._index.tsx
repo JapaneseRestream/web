@@ -1,25 +1,26 @@
 import { Button } from "@radix-ui/themes";
-import { css } from "../../../styled-system/css/css.js";
-import { trpc } from "../trpc.js";
 import { json, type LoaderFunctionArgs } from "@remix-run/node";
-import { createDiscordOauthUrl } from "../discord-oauth.server.js";
 import {
 	Link,
 	useLoaderData,
 	useNavigate,
 	useRevalidator,
 } from "@remix-run/react";
-import { assertNoSession } from "../session.server.js";
 import { startAuthentication } from "@simplewebauthn/browser";
-import { CenterLayout } from "../components/center-layout.js";
 import { generateAuthenticationOptions } from "@simplewebauthn/server";
-import { env } from "../../shared/env.server.js";
+import { parse } from "cookie";
+
+import { css } from "../../../styled-system/css/css.js";
 import {
 	PASSKEY_CHALLENGE_COOKIE_NAME,
 	SIGN_IN_REDIRECT_COOKIE_NAME,
 } from "../../shared/constants.js";
+import { env } from "../../shared/env.server.js";
+import { CenterLayout } from "../components/center-layout.js";
 import { serializeCookie } from "../cookie.server.js";
-import { parse } from "cookie";
+import { createDiscordOauthUrl } from "../discord-oauth.server.js";
+import { assertNoSession } from "../session.server.js";
+import { trpc } from "../trpc.js";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	await assertNoSession(request);

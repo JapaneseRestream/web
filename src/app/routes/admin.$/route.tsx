@@ -1,19 +1,22 @@
 import "./index.css";
 
+import { Role } from "@prisma/client";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { Admin, Resource } from "react-admin";
+
 import { prisma } from "../../../shared/prisma.server";
-import { Role } from "@prisma/client";
+import { assertSession } from "../../session.server";
+
 import { dataProvider } from "./data-provider";
+import { EventCreate, EventEdit, EventList } from "./event";
 import {
 	EventGroupList,
 	EventGroupEdit,
 	EventGroupCreate,
 } from "./event-group";
-import { UserList } from "./user";
-import { EventCreate, EventEdit, EventList } from "./event";
 import { RunEdit, RunList } from "./run";
-import { assertSession } from "../../session.server";
+import { UserList } from "./user";
+
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const session = await assertSession(request);

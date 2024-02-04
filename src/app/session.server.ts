@@ -1,7 +1,9 @@
 import { redirect } from "@remix-run/node";
-import { getSession } from "./cookie.server";
 import { serialize } from "cookie";
+
 import { SIGN_IN_REDIRECT_COOKIE_NAME } from "../shared/constants";
+
+import { getSession } from "./cookie.server";
 
 export const assertSession = async (request: Request) => {
 	const session = await getSession(request);

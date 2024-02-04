@@ -1,3 +1,5 @@
+import { Theme } from "@radix-ui/themes";
+import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
 import {
 	Links,
 	LiveReload,
@@ -8,18 +10,18 @@ import {
 	type MetaFunction,
 	json,
 } from "@remix-run/react";
-import { Theme } from "@radix-ui/themes";
-import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
-import icon from "./images/icon.png";
-import { TrpcProvider } from "./trpc.js";
+
 import { ACTIVITY_COOKIE_NAME } from "../shared/constants.js";
+import { renewSession } from "../shared/session.server.js";
+
 import {
 	activityCookieSetCookie,
 	parseCookie,
 	parseSessionToken,
 	serializeSessionToken,
 } from "./cookie.server.js";
-import { renewSession } from "../shared/session.server.js";
+import icon from "./images/icon.png";
+import { TrpcProvider } from "./trpc.js";
 
 export const meta: MetaFunction = () => [
 	{ charSet: "utf-8" },

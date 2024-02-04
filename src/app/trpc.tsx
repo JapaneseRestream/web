@@ -1,10 +1,11 @@
-import { useState, type PropsWithChildren } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
 	createTRPCProxyClient,
 	createTRPCReact,
 	httpBatchLink,
 } from "@trpc/react-query";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useState, type PropsWithChildren } from "react";
+
 import type { AppRouter } from "../server/router.js";
 
 export const trpc = createTRPCReact<AppRouter>();

@@ -1,9 +1,10 @@
 import "../index.css";
 
+import type { LoaderFunctionArgs } from "@remix-run/node";
 import { Outlet, json, useLoaderData } from "@remix-run/react";
+
 import { css } from "../../../styled-system/css";
 import { AppHeader } from "../components/header";
-import type { LoaderFunctionArgs } from "@remix-run/node";
 import { getSession } from "../cookie.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {

@@ -4,6 +4,7 @@
   "parserOptions": {
     "project": "./tsconfig.json"
   },
+  "plugins": ["import"],
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/strict-type-checked",
@@ -19,6 +20,15 @@
       "error",
       {
         "controlComponents": ["TextField.Input"]
+      }
+    ],
+    "import/order": [
+      "error",
+      {
+        "newlines-between": "always",
+        "alphabetize": {
+          "order": "asc"
+        }
       }
     ]
   }

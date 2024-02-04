@@ -16,6 +16,7 @@ import {
 	BooleanInput,
 	RadioButtonGroupInput,
 } from "react-admin";
+
 import { dataSourceType } from "../../../shared/constants";
 
 export const EventList = () => (

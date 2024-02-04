@@ -17,6 +17,7 @@ import type {
 	UpdateParams,
 	UpdateResult,
 } from "react-admin";
+
 import { trpcClient } from "../../trpc";
 
 const filterResource = (resource: string) => {

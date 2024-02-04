@@ -1,15 +1,17 @@
+import type { CookieSerializeOptions } from "@fastify/cookie";
+import { Role } from "@prisma/client";
 import { TRPCError, initTRPC } from "@trpc/server";
 import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify";
+
 import {
 	DISCORD_OAUTH_STATE_COOKIE_NAME,
 	SESSION_COOKIE_NAME,
 } from "../shared/constants.js";
-import { validateSession } from "../shared/session.server.js";
 import { sessionCookieOptions } from "../shared/cookie.js";
-import { prisma } from "../shared/prisma.server.js";
-import { Role } from "@prisma/client";
 import { env } from "../shared/env.server.js";
-import type { CookieSerializeOptions } from "@fastify/cookie";
+import { prisma } from "../shared/prisma.server.js";
+import { validateSession } from "../shared/session.server.js";
+
 
 export const createContext = ({ req, res }: CreateFastifyContextOptions) => {
 	const setCookie = (

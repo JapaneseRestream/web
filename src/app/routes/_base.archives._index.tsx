@@ -1,4 +1,5 @@
 import { json, redirect } from "@remix-run/react";
+
 import { prisma } from "../../shared/prisma.server";
 
 export const loader = async () => {

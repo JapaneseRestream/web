@@ -1,6 +1,7 @@
-import { useEffect, useRef } from "react";
-import { trpc } from "../trpc";
 import { useNavigate } from "@remix-run/react";
+import { useEffect, useRef } from "react";
+
+import { trpc } from "../trpc";
 
 export default function CallbackDiscord() {
 	const navigate = useNavigate();

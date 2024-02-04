@@ -1,6 +1,7 @@
 import { json, type LoaderFunctionArgs } from "@remix-run/node";
-import { prisma } from "../../shared/prisma.server";
 import { useLoaderData } from "@remix-run/react";
+
+import { prisma } from "../../shared/prisma.server";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
 	const { eventShortName } = params;

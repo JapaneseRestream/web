@@ -1,8 +1,8 @@
 import * as path from "node:path";
-import { fastify, type FastifyRequest } from "fastify";
-import { fastifyStatic } from "@fastify/static";
+
 import { fastifyCookie } from "@fastify/cookie";
 import { fastifyHelmet } from "@fastify/helmet";
+import { fastifyStatic } from "@fastify/static";
 import {
 	createRequestHandler,
 	type RequestHandler,
@@ -11,10 +11,14 @@ import {
 	fastifyTRPCPlugin,
 	type FastifyTRPCPluginOptions,
 } from "@trpc/server/adapters/fastify";
-import { appRouter, type AppRouter } from "./router.js";
+import { fastify, type FastifyRequest } from "fastify";
+
+
 import { env } from "../shared/env.server.js";
-import { createContext } from "./trpc.js";
+
 import { syncDataSource } from "./jobs/sync-data-source.js";
+import { appRouter, type AppRouter } from "./router.js";
+import { createContext } from "./trpc.js";
 
 const server = fastify({
 	maxParamLength: 5000,

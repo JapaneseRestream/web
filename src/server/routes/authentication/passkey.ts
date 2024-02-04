@@ -8,13 +8,14 @@ import type {
 	RegistrationResponseJSON,
 	AuthenticationResponseJSON,
 } from "@simplewebauthn/types";
-import { authenticatedProcedure, publicProcedure, router } from "../../trpc";
+import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+
+import { PASSKEY_CHALLENGE_COOKIE_NAME } from "../../../shared/constants";
+import { createToken } from "../../../shared/create-token";
 import { env } from "../../../shared/env.server";
 import { prisma } from "../../../shared/prisma.server";
-import { z } from "zod";
-import { TRPCError } from "@trpc/server";
-import { createToken } from "../../../shared/create-token";
-import { PASSKEY_CHALLENGE_COOKIE_NAME } from "../../../shared/constants";
+import { authenticatedProcedure, publicProcedure, router } from "../../trpc";
 
 const verifyRegistrationResponseSchema = z.object({
 	id: z.string(),

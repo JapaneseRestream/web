@@ -1,6 +1,7 @@
 import ky from "ky";
-import { prisma } from "../../shared/prisma.server";
+
 import { durationStrToSeconds } from "../../shared/duration";
+import { prisma } from "../../shared/prisma.server";
 
 export const syncDataSource = async () => {
 	const events = await prisma.event.findMany({
