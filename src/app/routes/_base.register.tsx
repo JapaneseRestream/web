@@ -20,32 +20,39 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export default () => {
 	const data = useActionData<typeof action>();
 
-	return (
-		<CenterLayout>
-			{typeof data === "undefined" ? (
-				<Form
-					method="post"
-					className={css({
-						display: "grid",
-						justifyItems: "end",
-						gap: "4px",
-					})}
-				>
-					<label className={css({ width: "250px" })}>
-						<Text>メールアドレス</Text>
-						<TextField.Input
-							name="email"
-							type="email"
-							inputMode="email"
-							autoComplete="email"
-							required
-						/>
-					</label>
-					<Button type="submit">登録</Button>
-				</Form>
-			) : (
+	if (typeof data !== "undefined") {
+		return (
+			<CenterLayout>
 				<Text>確認メールを送信しました</Text>
-			)}
+			</CenterLayout>
+		);
+	}
+
+	return (
+		<CenterLayout className={css({ justifyItems: "center", gap: "8px" })}>
+			<Text asChild size="5" weight="bold">
+				<h1>新規登録</h1>
+			</Text>
+			<Form
+				method="post"
+				className={css({
+					display: "grid",
+					justifyItems: "end",
+					gap: "4px",
+				})}
+			>
+				<label className={css({ width: "250px" })}>
+					<Text>メールアドレス</Text>
+					<TextField.Input
+						name="email"
+						type="email"
+						inputMode="email"
+						autoComplete="email"
+						required
+					/>
+				</label>
+				<Button type="submit">登録</Button>
+			</Form>
 		</CenterLayout>
 	);
 };

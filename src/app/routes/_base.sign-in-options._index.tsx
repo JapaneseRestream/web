@@ -5,7 +5,7 @@ import { faKey } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Code, IconButton, Table, Text } from "@radix-ui/themes";
 import type { LoaderFunctionArgs } from "@remix-run/node";
-import { json, useLoaderData, useRevalidator } from "@remix-run/react";
+import { Link, json, useLoaderData, useRevalidator } from "@remix-run/react";
 import { startRegistration } from "@simplewebauthn/browser";
 
 import { css } from "../../../styled-system/css";
@@ -91,8 +91,19 @@ export default function FinishRegistration() {
 						<span>Eメールアドレス</span>
 					</dt>
 				</Text>
-				<dd>
+				<dd
+					className={css({
+						display: "grid",
+						gridAutoFlow: "column",
+						justifyContent: "start",
+						alignItems: "center",
+						gap: "16px",
+					})}
+				>
 					<Code>{data.email}</Code>
+					<Button asChild>
+						<Link to="change-email">変更</Link>
+					</Button>
 				</dd>
 				<Text size="5" weight="bold" asChild>
 					<dt

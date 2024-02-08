@@ -31,7 +31,10 @@ export default () => {
 	}
 
 	return (
-		<CenterLayout>
+		<CenterLayout className={css({ justifyItems: "center", gap: "8px" })}>
+			<Text asChild size="5" weight="bold">
+				<h1>Eメールでログイン</h1>
+			</Text>
 			<Form
 				method="post"
 				className={css({
