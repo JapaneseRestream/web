@@ -1,6 +1,6 @@
 import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
 
-import { env } from "../shared/env.server";
+import { env } from "./env.server";
 
 const sesClient = new SESv2Client({ region: "ap-northeast-1" });
 

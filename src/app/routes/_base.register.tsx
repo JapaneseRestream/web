@@ -5,8 +5,8 @@ import { z } from "zod";
 import { zfd } from "zod-form-data";
 
 import { css } from "../../../styled-system/css/css.js";
-import { sendEmail } from "../../server/email.js";
 import { createToken } from "../../shared/create-token.js";
+import { sendEmail } from "../../shared/email.server.js";
 import { env } from "../../shared/env.server.js";
 import { prisma } from "../../shared/prisma.server.js";
 import { CenterLayout } from "../components/center-layout.js";
@@ -106,11 +106,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 	await sendEmail({
 		to: email,
 		subject: "japanese-restream.org: 新規登録",
-		body: [
-			"このメールは、japanese-restream.org にて新規登録を行ったことを確認するために送信されています。以下のリンクをクリックして新規登録を完了してください。",
+		body:
+			"このメールは、japanese-restream.org にて新規登録を行ったことを確認するために送信されています。以下のリンクをクリックして新規登録を完了してください。もし、japanese-restream.org にて新規登録を行っていない場合は、このメールを破棄してください。" +
+			"\n\n" +
 			url.href,
-			"もし、japanese-restream.org にて新規登録を行っていない場合は、このメールを破棄してください。",
-		].join("\n\n"),
 	});
 
 	return null;

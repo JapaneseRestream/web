@@ -5,8 +5,8 @@ import { z } from "zod";
 import { zfd } from "zod-form-data";
 
 import { css } from "../../../styled-system/css";
-import { sendEmail } from "../../server/email";
 import { createToken } from "../../shared/create-token";
+import { sendEmail } from "../../shared/email.server";
 import { env } from "../../shared/env.server";
 import { prisma } from "../../shared/prisma.server";
 import { CenterLayout } from "../components/center-layout";
