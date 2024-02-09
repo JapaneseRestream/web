@@ -8,7 +8,7 @@ import {
 	fastifyTRPCPlugin,
 	type FastifyTRPCPluginOptions,
 } from "@trpc/server/adapters/fastify";
-import { fastify, type FastifyRequest } from "fastify";
+import { fastify } from "fastify";
 
 import { env } from "../shared/env.server.js";
 
@@ -24,11 +24,6 @@ await server.register(fastifyHelmet, {
 	hsts: env.NODE_ENV === "production",
 	contentSecurityPolicy: false,
 });
-
-server.addContentTypeParser(
-	"application/x-www-form-urlencoded",
-	(request: FastifyRequest) => request,
-);
 
 await server.register(fastifyCookie, {
 	secret: env.SESSION_COOKIE_SECRET,
@@ -70,8 +65,13 @@ if (process.env.NODE_ENV === "production") {
 	});
 }
 
-server.all("*", async (request, reply) => {
-	await handler(request, reply);
+// eslint-disable-next-line @typescript-eslint/require-await
+await server.register(async (childServer) => {
+	childServer.removeAllContentTypeParsers();
+	childServer.addContentTypeParser("*", (_request, payload, done) => {
+		done(null, payload);
+	});
+	childServer.all("*", handler);
 });
 
 const address = await server.listen({
