@@ -17,7 +17,7 @@ import {
 	RadioButtonGroupInput,
 } from "react-admin";
 
-import { dataSourceType } from "../../../shared/constants";
+import { dataSourceType } from "../shared/constants";
 
 export const EventList = () => (
 	<List sort={{ field: "startDate", order: "ASC" }}>

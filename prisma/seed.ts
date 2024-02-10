@@ -5,6 +5,15 @@ const prisma = new PrismaClient();
 const devSeed = async () => {
 	await prisma.user.create({
 		data: {
+			email: "superadmin@example.com",
+			UserRole: {
+				create: [{ role: Role.SuperAdmin }, { role: Role.Admin }],
+			},
+		},
+	});
+
+	await prisma.user.create({
+		data: {
 			email: "admin@example.com",
 			UserRole: {
 				create: {
@@ -223,16 +232,14 @@ const prodSeed = async () => {
 		data: {
 			email: "hoishinxii@gmail.com",
 			UserRole: {
-				create: {
-					role: Role.Admin,
-				},
+				create: [{ role: Role.SuperAdmin }, { role: Role.Admin }],
 			},
 		},
 	});
 };
 
 if (process.env.NODE_ENV === "production") {
-	prodSeed();
+	await prodSeed();
 } else {
-	devSeed();
+	await devSeed();
 }

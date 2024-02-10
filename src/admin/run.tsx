@@ -13,7 +13,7 @@ import {
 	UrlField,
 } from "react-admin";
 
-import { secondsToDurationStr } from "../../../shared/duration";
+import { secondsToDurationStr } from "../shared/duration";
 
 export const RunList = () => (
 	<List

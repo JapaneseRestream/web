@@ -1,9 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-	createTRPCProxyClient,
-	createTRPCReact,
-	httpBatchLink,
-} from "@trpc/react-query";
+import { createTRPCReact, httpBatchLink } from "@trpc/react-query";
 import { useState, type PropsWithChildren } from "react";
 
 import type { AppRouter } from "../server/router.js";
@@ -28,11 +24,3 @@ export const TrpcProvider = ({ children }: PropsWithChildren) => {
 		</trpc.Provider>
 	);
 };
-
-export const trpcClient = createTRPCProxyClient<AppRouter>({
-	links: [
-		httpBatchLink({
-			url: "/api/trpc",
-		}),
-	],
-});

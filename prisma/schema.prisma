@@ -120,6 +120,7 @@ model UserEmailChange {
 }
 
 enum Role {
+  SuperAdmin
   Admin
 }
 
