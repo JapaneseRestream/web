@@ -107,11 +107,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 	await sendEmail({
 		to: email,
 		subject: "japanese-restream.org: ログイン",
-		body: [
-			"Japanese Restreamのウェブサイトにログインするには、以下のリンクをクリックしてください。",
+		body:
+			"Japanese Restreamのウェブサイトにログインするには、以下のリンクをクリックしてください。このメールに心当たりがない場合は、このメールを無視してください。" +
+			"\n\n" +
 			url.href,
-			"このメールに心当たりがない場合は、このメールを無視してください。",
-		].join("\n\n"),
 	});
 
 	return null;

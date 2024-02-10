@@ -11,7 +11,7 @@ services:
       - ./local-proxy/www.japanese-restream.org.localhost-key.pem:/ssl/key.pem
       - ./build/client/assets:/www/assets
   db:
-    image: postgres:16.1
+    image: postgres:16
     volumes:
       - db_data:/var/lib/postgresql/data/
     environment:
