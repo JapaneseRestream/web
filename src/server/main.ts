@@ -40,7 +40,7 @@ await server.register(fastifyTRPCPlugin, {
 	},
 } satisfies FastifyTRPCPluginOptions<AppRouter>);
 
-let handler: RequestHandler;
+let handler: RequestHandler<typeof server.server>;
 
 if (process.env.NODE_ENV === "production") {
 	handler = createRequestHandler({
