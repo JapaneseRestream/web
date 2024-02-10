@@ -14,6 +14,7 @@ export const sendEmail = async (props: {
 		return;
 	}
 	const command = new SendEmailCommand({
+		FromEmailAddressIdentityArn: env.AWS_SES_IDENTITY_ARN,
 		FromEmailAddress: "noreply@japanese-restream.org",
 		Destination: {
 			ToAddresses: [props.to],

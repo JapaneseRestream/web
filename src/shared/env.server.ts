@@ -10,6 +10,7 @@ const envSchema = z.object({
 	DISCORD_CLIENT_SECRET: z.string(),
 	PASSKEY_RP_NAME: z.string(),
 	PASSKEY_RP_ID: z.string(),
+	AWS_SES_IDENTITY_ARN: z.string(),
 });
 
 export const env = envSchema.parse(process.env);
