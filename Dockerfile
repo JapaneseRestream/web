@@ -33,6 +33,7 @@ COPY package.json ./
 
 COPY --from=node_modules /app/node_modules node_modules
 COPY --from=build /app/build build
+COPY --from=build /app/dist dist
 COPY --from=build /app/out out
 COPY --from=build /app/styled-system styled-system
 
