@@ -1,6 +1,6 @@
 import "./index.css";
 
-import { Theme } from "@radix-ui/themes";
+import { Text, Theme } from "@radix-ui/themes";
 import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
 import {
 	Links,
@@ -11,13 +11,15 @@ import {
 	type MetaFunction,
 	json,
 	useLoaderData,
+	useRouteError,
+	isRouteErrorResponse,
 } from "@remix-run/react";
+import { type PropsWithChildren } from "react";
 
-import { css } from "../../styled-system/css/css.js";
 import { ACTIVITY_COOKIE_NAME } from "../shared/constants.js";
 import { renewSession } from "../shared/session.server.js";
 
-import { AppHeader } from "./components/header.js";
+import { PageLayout } from "./components/page-layout.js";
 import {
 	activityCookieSetCookie,
 	getSession,
@@ -48,7 +50,7 @@ export const links: LinksFunction = () => [
 	},
 ];
 
-const calcHeaders = async (request: Request) => {
+const calcHeaders = async (request: Request): Promise<[string, string][]> => {
 	const cookies = parseCookie(request);
 	const activityCookie = cookies[ACTIVITY_COOKIE_NAME];
 	if (activityCookie) {
@@ -65,7 +67,7 @@ const calcHeaders = async (request: Request) => {
 	return [
 		["Set-Cookie", serializeSessionToken(newSessionToken)],
 		["Set-Cookie", activityCookieSetCookie],
-	] satisfies [string, string][];
+	];
 };
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -79,9 +81,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 	return json({ user }, { headers });
 };
 
-export default function App() {
-	const data = useLoaderData<typeof loader>();
-
+const Document = ({ children }: PropsWithChildren) => {
 	return (
 		<html lang="ja">
 			<head>
@@ -90,38 +90,40 @@ export default function App() {
 			</head>
 			<body>
 				<Theme>
-					<TrpcProvider>
-						<div
-							className={css({
-								height: "100vh",
-								width: "100vw",
-								display: "grid",
-								gridTemplateRows: "auto 1fr",
-								overflow: "hidden",
-							})}
-						>
-							<AppHeader user={data.user} />
-							<div
-								className={css({
-									height: "100%",
-									width: "100%",
-									display: "grid",
-									overflow: "auto",
-
-									padding: "8px",
-									md: {
-										padding: "16px",
-									},
-								})}
-							>
-								<Outlet />
-							</div>
-						</div>
-					</TrpcProvider>
+					<TrpcProvider>{children}</TrpcProvider>
 				</Theme>
 				<ScrollRestoration />
 				<Scripts />
 			</body>
 		</html>
 	);
-}
+};
+
+export default () => {
+	const data = useLoaderData<typeof loader>();
+
+	return (
+		<Document>
+			<PageLayout user={data.user}>
+				<Outlet />
+			</PageLayout>
+		</Document>
+	);
+};
+
+export const ErrorBoundary = () => {
+	const error = useRouteError();
+
+	return (
+		<>
+			<h1>
+				{isRouteErrorResponse(error)
+					? `${error.status} ${error.statusText}`
+					: "Unknown Error"}
+			</h1>
+			<div>
+				{isRouteErrorResponse(error) ? error.data : "An unknown error occurred"}
+			</div>
+		</>
+	);
+};

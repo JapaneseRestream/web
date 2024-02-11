@@ -40,6 +40,7 @@ export const validateSession = async (sessionToken: string) => {
 		},
 		select: {
 			id: true,
+			token: true,
 			user: {
 				select: {
 					id: true,
